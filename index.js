@@ -12,7 +12,7 @@ const URI = process.env.URI
 app.use(cors());
 // Connection
 connectMongoDb(URI)
-
+  
 // MIDDLEWARE - plugin
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
