@@ -1,24 +1,23 @@
 const User = require("../models/user");
-const Client = require("../models/login")
 
 async function GetAllUsers(req, res) {
-  const alldbUsers = await Client.find({});
+  const alldbUsers = await User.find({});
   return res.json(alldbUsers);
 }
 
 async function GetUserById(req, res) {
-  const user = await Client.findById(req.params.id);
+  const user = await User.findById(req.params.id);
   if (!user) return res.status(404).json({ error: "user not found" });
   return res.json(user);
 }
 
 async function UpdateUserById(req, res) {
-  await Client.findByIdAndUpdate(req.params.id, { lastName: "changed" });
+  await User.findByIdAndUpdate(req.params.id, { lastName: "changed" });
   res.json({ status: "success patched" });
 }
 
 async function deleteUserById(req, res) {
-  await Client.findByIdAndDelete(req.params.id);
+  await User.findByIdAndDelete(req.params.id);
   res.json({ status: "deleted successfully" });
 }
 
@@ -27,23 +26,22 @@ async function CreateNewUser(req, res) {
   const body = req.body;
   console.log(body)
   if (
-    // !body ||
-    // !body.firstName ||
-    // !body.lastName ||
+    !body ||
+    !body.firstName ||
     !body.email ||
     // !body.gender ||
-    // !body.jobTitle
+    !body.userType ||
     !body.password
   ) {
     return res.status(400).json({ msg: "all fields are req..." });
   }
-  const result = await Client.create({
-    // firstName: body.firstName,
-    // lastName: body.lastName,
+  const result = await User.create({
+    firstName: body.firstName,
+    lastName: body.lastName,
     email: body.email,
-    password: body.password
+    password: body.password,
     // gender: body.gender,
-    // jobTitle: body.jobTitle,
+    userType: body.userType,
   });
   return res.status(201).json({ msg: "success", id: result._id });
 }
@@ -56,7 +54,7 @@ async function ValidateUserLogin(req, res) {
     return res.status(400).json({ error: "Email and password are required" });
   }
 
-  const user = await Client.findOne({ email });
+  const user = await User.findOne({ email });
 
   if (!user) {
     return res.status(404).json({ error: "User not found" });
@@ -67,6 +65,9 @@ async function ValidateUserLogin(req, res) {
   if (user.password !== password) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
+
+
+
    return res.json({ message: "Login successful", userId: user._id });
 }
 
