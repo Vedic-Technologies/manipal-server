@@ -20,20 +20,21 @@ const patientSchema = new mongoose.Schema(
     DOB: {
       date: {
         type: Number,
-        default: "NA",
+        default: 12,
       },
       month: {
         type: Number,
-        default: "NA",
+        default: 12,
       },
       year: {
         type: Number,
-        default: "NA",
+        default: 12,
       },
     },
 
     contact: {
       type: Number,
+      default: 123456789,
       //   require: true,
     },
 
@@ -75,7 +76,7 @@ const patientSchema = new mongoose.Schema(
 
     complaint: {
       type: String,
-      require: true,
+      // require: true,
     },
     referredTo: {
       type: String,
@@ -90,12 +91,12 @@ const patientSchema = new mongoose.Schema(
 
       state: {
         type: String,
-        required: true,
+        // required: true,
       },
 
       district: {
         type: String,
-        required: true,
+        // required: true,
       },
 
       pin_code: {
