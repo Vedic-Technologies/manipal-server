@@ -1,7 +1,7 @@
 const Patient = require("../models/registerPatient");
 
 async function RegisterPatient(req, res) {
-  console.log(req.body);
+  // console.log(req.body);
   const body = req.body;
   if (
     !body ||
