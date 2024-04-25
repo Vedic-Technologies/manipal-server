@@ -1,4 +1,6 @@
+const { v4: uuidv4 } = require("uuid");
 const User = require("../models/user");
+const { setUser } = require("../service/auth");
 
 async function GetAllUsers(req, res) {
   const alldbUsers = await User.find({});
@@ -22,14 +24,13 @@ async function deleteUserById(req, res) {
 }
 
 async function CreateNewUser(req, res) {
-  console.log(req.body);
+  // console.log(req.body);
   const body = req.body;
-  console.log(body)
+  // console.log(body);
   if (
     !body ||
     !body.firstName ||
     !body.email ||
-    // !body.gender ||
     !body.userType ||
     !body.password
   ) {
@@ -45,7 +46,6 @@ async function CreateNewUser(req, res) {
   });
   return res.status(201).json({ msg: "success", id: result._id });
 }
-
 
 async function ValidateUserLogin(req, res) {
   const { email, password } = req.body;
@@ -66,9 +66,11 @@ async function ValidateUserLogin(req, res) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
 
-
-
-   return res.json({ message: "Login successful", userId: user._id });
+  const sessionID = uuidv4();
+  setUser(sessionID, user);
+  res.cookie("uid", sessionID);
+  // return res.redirect("/home");
+  return res.json({ message: "Login successful", userId: user._id });
 }
 
 module.exports = {
@@ -77,5 +79,5 @@ module.exports = {
   UpdateUserById,
   deleteUserById,
   CreateNewUser,
-  ValidateUserLogin
+  ValidateUserLogin,
 };
