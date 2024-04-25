@@ -13,27 +13,30 @@ const patientSchema = new mongoose.Schema(
     },
 
     age: {
-      type: Number,
+      type: mongoose.Schema.Types.Mixed,
       require: true,
     },
 
-    DOB: {
-      date: {
-        type: Number,
-        default: 12,
-      },
-      month: {
-        type: Number,
-        default: 12,
-      },
-      year: {
-        type: Number,
-        default: 12,
-      },
+    dob: {
+      type: mongoose.Schema.Types.Mixed,
     },
+    // DOB: {
+    //   date: {
+    //     type: Number,
+    //     default: 12,
+    //   },
+    //   month: {
+    //     type: Number,
+    //     default: 12,
+    //   },
+    //   year: {
+    //     type: Number,
+    //     default: 12,
+    //   },
+    // },
 
     contact: {
-      type: Number,
+      type: mongoose.Schema.Types.Mixed,
       default: 123456789,
       //   require: true,
     },
@@ -60,12 +63,12 @@ const patientSchema = new mongoose.Schema(
     },
 
     weight: {
-      type: Number,
+      type: mongoose.Schema.Types.Mixed,
       default: "NA",
     },
 
     height: {
-      type: Number,
+      type: mongoose.Schema.Types.Mixed,
       default: "NA",
     },
 
@@ -100,7 +103,7 @@ const patientSchema = new mongoose.Schema(
       },
 
       pin_code: {
-        type: String,
+        type: mongoose.Schema.Types.Mixed,
         default: "NA",
       },
 

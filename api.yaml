@@ -1,0 +1,14 @@
+# swagger: "2.0"
+# info:
+#   title: "Node Js API Project for physiotherapy"
+#   description: api documentation for physiotherapy
+#   version: "1.0"
+#   servers:
+#     -url: "https://localhost:8000/"
+#     description: "this is current server"
+# schemes: [http, https]
+
+# path:
+#   /api/admin/patient_registration:
+#     get:
+#       summary: returns all list of registered users

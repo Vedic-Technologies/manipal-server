@@ -1,17 +1,13 @@
 const Patient = require("../models/registerPatient");
 
 async function RegisterPatient(req, res) {
-  // console.log(req.body);
+  console.log(req.body);
   const body = req.body;
   if (
     !body ||
     !body.patientName ||
     !body.gender ||
-    !body.age ||
-    !body.address.state ||
-    !body.address.district ||
-    !body.address.state ||
-    !body.complaint
+    !body.age
   ) {
     return res.status(400).json({ msg: "all fields are req..." });
   }
