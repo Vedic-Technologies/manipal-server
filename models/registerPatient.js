@@ -17,20 +17,23 @@ const patientSchema = new mongoose.Schema(
       require: true,
     },
 
-    DOB: {
-      date: {
-        type: Number,
-        default: 12,
-      },
-      month: {
-        type: Number,
-        default: 12,
-      },
-      year: {
-        type: Number,
-        default: 12,
-      },
+    dob: {
+      type: String
     },
+    // DOB: {
+    //   date: {
+    //     type: Number,
+    //     default: 12,
+    //   },
+    //   month: {
+    //     type: Number,
+    //     default: 12,
+    //   },
+    //   year: {
+    //     type: Number,
+    //     default: 12,
+    //   },
+    // },
 
     contact: {
       type: Number,
