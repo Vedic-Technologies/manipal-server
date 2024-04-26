@@ -4,6 +4,12 @@ info:
   description: API documentation for physiotherapy
   version: "1.0"
 
+tags:
+  - name: user
+    description: Endpoints related to user management
+  - name: admin
+    description: Endpoints related to admin operations
+
 host: localhost:8000
 schemes:
   - http
@@ -15,27 +21,108 @@ produces:
   - application/json
 
 paths:
-  /api/users/:
+  /api/users:
     get:
-      summary: get all Created users
-      description: Returns a list of all patients.
+      tags: # Assigning the 'user' tag to this endpoint
+        - user
+      summary: Get all users
       responses:
         200:
           description: Successful response
-          examples:
-            application/json:
-              users:
-                - id: 1
-                  name: John Doe
-                  email: john@example.com
-                  role: user
-                - id: 2
-                  name: Jane Smith
-                  email: jane@example.com
-                  role: admin
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/User"
+
+  /api/users/{id}:
+    get:
+      tags: # Assigning the 'user' tag to this endpoint
+        - user
+      summary: Get a user by ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of the user to retrieve
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/User"
+        404:
+          description: User not found
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+    patch:
+      tags: # Assigning the 'user' tag to this endpoint
+        - user
+      summary: Update a user by ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of the user to update
+          required: true
+          type: string
+        - in: body
+          name: user
+          description: User data to update
+          required: true
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        200:
+          description: Update successful
+          schema:
+            $ref: "#/definitions/User"
+    delete:
+      tags: # Assigning the 'user' tag to this endpoint
+        - user
+      summary: Delete a user by ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of the user to delete
+          required: true
+          type: string
+      responses:
+        200:
+          description: Deletion successful
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+  /api/users/signup:
+    post:
+      tags: # Assigning the 'user' tag to this endpoint
+        - user
+      summary: Create a new user
+      parameters:
+        - in: body
+          name: user
+          description: User registration data
+          required: true
+          schema:
+            $ref: "#/definitions/NewUser"
+      responses:
+        201:
+          description: User created successfully
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+              id:
+                type: string
 
   /api/admin/patient_registration:
     post:
+      tags: # Assigning the 'admin' tag to this endpoint
+        - admin
       summary: Register a new patient
       description: Creates a new patient record
       consumes:
@@ -113,6 +200,10 @@ paths:
 
   /api/admin/{id}:
     get:
+      tags: # Assigning the 'admin' tag to this endpoint
+        - admin
+      tags: # Assigning the 'user' tag to this endpoint
+        - admin
       summary: Get a patient by ID
       parameters:
         - name: id
@@ -132,7 +223,9 @@ paths:
             properties:
               error:
                 type: string
-    put:
+    patch:
+      tags: # Assigning the 'admin' tag to this endpoint
+        - admin
       summary: Update a patient by ID
       parameters:
         - name: id
@@ -206,20 +299,19 @@ paths:
       responses:
         200:
           description: Update successful
+          examples:
+            status: Update Successful
+            patient: {}
           schema:
             type: object
             properties:
               status:
                 type: string
-      responses:
-        200:
-          description: Update successful
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
+              patient:
+                type: object
     delete:
+      tags: # Assigning the 'admin' tag to this endpoint
+        - admin
       summary: Delete a patient by ID
       parameters:
         - name: id
@@ -235,8 +327,9 @@ paths:
             properties:
               status:
                 type: string
+
 definitions:
-  Patient:
+  User:
     type: object
     properties:
       _id:
@@ -245,3 +338,67 @@ definitions:
         type: string
       lastName:
         type: string
+      email:
+        type: string
+      userType:
+        type: string
+
+  Patient:
+    type: object
+    properties:
+      patientName:
+        type: string
+      gender:
+        type: string
+      age:
+        type: number
+        default: 45
+      dob:
+        type: string
+        format: date
+      contact:
+        type: number
+        default: 123456789
+      email:
+        type: string
+        default: "NA"
+      IdProof:
+        type: object
+        properties:
+          IdType:
+            type: string
+            default: "NA"
+          Id:
+            type: string
+            default: "NA"
+      bloodGroup:
+        type: string
+        default: "NA"
+      weight:
+        type: number
+      height:
+        type: number
+      relative:
+        type: string
+        default: "NA"
+      complaint:
+        type: string
+      referredTo:
+        type: string
+        default: "NA"
+      address:
+        type: object
+        properties:
+          country:
+            type: string
+            default: "India"
+          state:
+            type: string
+          district:
+            type: string
+          pin_code:
+            type: string
+            default: "NA"
+          village:
+            type: string
+            default: "NA"

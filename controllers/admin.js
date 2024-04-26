@@ -35,10 +35,22 @@ async function GetPatientById(req, res) {
 }
 
 async function UpdatePatientById(req, res) {
-  await Patient.findByIdAndUpdate(req.params.id, {
-    patientName: "changed now",
-  });
-  res.json({ status: "update success" });
+  try {
+    const patientUpdates = req.body;
+    const patient = await Patient.findById(req.params.id);
+    if (!patient) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+    Object.keys(patientUpdates).forEach((key) => {
+      patient[key] = patientUpdates[key];
+    });
+
+    const updatedPatient = await patient.save();
+    return res.json({ status: "update success", patient: updatedPatient });
+  } catch (error) {
+    console.error("Error updating patient:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 }
 
 async function deletePatientById(req, res) {
