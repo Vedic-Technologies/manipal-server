@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const swaggerJSDocs = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+const YAML = require("yamljs");
 
 const { restrictToLoggedin } = require("./middlewares/auth.js");
 const userRouter = require("./routes/user");
@@ -10,7 +11,6 @@ const { connectMongoDb } = require("./connection.js");
 const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const { version } = require("mongoose");
 dotenv.config();
 
 const PORT = process.env.PORT;
@@ -38,33 +38,12 @@ const option = {
       },
     ],
   },
-  apis: ["./index.js", "./routes/admin.js"],
+  apis: ["./api.yaml"],
 };
 
-const swaggerDocs = swaggerJSDocs(option);
+const swaggerDocs = YAML.load("./api.yaml");
 console.log(swaggerDocs);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-
-/**
- * @swagger
- * /api/users/:
- *   get:
- *     description: Returns a list of all users.
- *     responses:
- *       200:
- *         description: Successful response
- *         examples:
- *           application/json:
- *             users:
- *               - id: 1
- *                 name: John Doe
- *                 email: john@example.com
- *                 role: user
- *               - id: 2
- *                 name: Jane Smith
- *                 email: jane@example.com
- *                 role: admin
- */
 
 //ROUTES
 app.use("/api/users", userRouter);

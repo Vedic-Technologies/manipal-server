@@ -18,27 +18,12 @@ const patientSchema = new mongoose.Schema(
     },
 
     dob: {
-      type: String
+      type: Date,
     },
-    // DOB: {
-    //   date: {
-    //     type: Number,
-    //     default: 12,
-    //   },
-    //   month: {
-    //     type: Number,
-    //     default: 12,
-    //   },
-    //   year: {
-    //     type: Number,
-    //     default: 12,
-    //   },
-    // },
 
     contact: {
       type: Number,
       default: 123456789,
-      //   require: true,
     },
 
     email: {
@@ -64,17 +49,14 @@ const patientSchema = new mongoose.Schema(
 
     weight: {
       type: Number,
-      default: "NA",
     },
 
     height: {
       type: Number,
-      default: "NA",
     },
 
     relative: {
       type: String,
-      default: "NA",
     },
 
     complaint: {

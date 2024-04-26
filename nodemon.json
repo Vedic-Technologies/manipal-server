@@ -1,0 +1,4 @@
+{
+  "watch": ["index.js", "api.yaml"],
+  "ext": "js,json,mjs,yaml"
+}
