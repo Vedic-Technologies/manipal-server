@@ -14,8 +14,22 @@ async function GetUserById(req, res) {
 }
 
 async function UpdateUserById(req, res) {
-  await User.findByIdAndUpdate(req.params.id, { lastName: "changed" });
-  res.json({ status: "success patched" });
+  try {
+    const userUpdates = req.body;
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: "user not found" });
+    }
+    Object.keys(userUpdates).forEach((key) => {
+      user[key] = userUpdates[key];
+    });
+
+    const updatedUser = await user.save();
+    return res.json({ status: "update success", user: updatedUser });
+  } catch (error) {
+    console.error("Error updating patient:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 }
 
 async function deleteUserById(req, res) {
