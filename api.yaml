@@ -10,9 +10,9 @@ tags:
   - name: admin
     description: Endpoints related to admin operations
 
-host: localhost:8000
+host: manipal-server.onrender.com
 schemes:
-  - http
+  - https
 
 consumes:
   - application/json
@@ -201,8 +201,6 @@ paths:
   /api/admin/{id}:
     get:
       tags: # Assigning the 'admin' tag to this endpoint
-        - admin
-      tags: # Assigning the 'user' tag to this endpoint
         - admin
       summary: Get a patient by ID
       parameters:
