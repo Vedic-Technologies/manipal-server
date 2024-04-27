@@ -118,6 +118,18 @@ paths:
                 type: string
               id:
                 type: string
+  /api/admin/all_patients/:
+    get:
+      tags: # Assigning the 'user' tag to this endpoint
+        - admin
+      summary: Get all registered patients
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/admin"
 
   /api/admin/patient_registration:
     post:
