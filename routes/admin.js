@@ -15,7 +15,7 @@ router.route("/all_patients").get(getRegisteredPatients);
 router
   .route("/:id")
   .get(GetPatientById)
-  .patch(UpdatePatientById)
+  .patch(UpdatePatientById)    //  ye sab router hta ke patient wale router me daliye
   .delete(deletePatientById);
 
 // router.route("/signup").post(CreateNewUser);
