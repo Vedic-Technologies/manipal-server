@@ -5,14 +5,20 @@ info:
   version: "1.0"
 
 tags:
-  - name: user
+  - name: User
     description: Endpoints related to user management
-  - name: admin
+  - name: Patient
+    description: Endpoints related to patient operations
+  - name: Payment
+    description: Endpoints related to payment operations
+  - name: Admin
     description: Endpoints related to admin operations
 
 host: manipal-server.onrender.com
+# host: localhost:8000
 schemes:
   - https
+  # - http
 
 consumes:
   - application/json
@@ -24,7 +30,7 @@ paths:
   /api/users:
     get:
       tags: # Assigning the 'user' tag to this endpoint
-        - user
+        - User
       summary: Get all users
       responses:
         200:
@@ -37,7 +43,7 @@ paths:
   /api/users/{id}:
     get:
       tags: # Assigning the 'user' tag to this endpoint
-        - user
+        - User
       summary: Get a user by ID
       parameters:
         - name: id
@@ -59,7 +65,7 @@ paths:
                 type: string
     patch:
       tags: # Assigning the 'user' tag to this endpoint
-        - user
+        - User
       summary: Update a user by ID
       parameters:
         - name: id
@@ -80,7 +86,7 @@ paths:
             $ref: "#/definitions/User"
     delete:
       tags: # Assigning the 'user' tag to this endpoint
-        - user
+        - User
       summary: Delete a user by ID
       parameters:
         - name: id
@@ -99,7 +105,7 @@ paths:
   /api/users/signup:
     post:
       tags: # Assigning the 'user' tag to this endpoint
-        - user
+        - User
       summary: Create a new user
       parameters:
         - in: body
@@ -118,10 +124,11 @@ paths:
                 type: string
               id:
                 type: string
-  /api/admin/all_patients/:
+
+  /api/patient/all_patients/:
     get:
       tags: # Assigning the 'user' tag to this endpoint
-        - admin
+        - Patient
       summary: Get all registered patients
       responses:
         200:
@@ -129,12 +136,12 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/admin"
+              $ref: "#/definitions/patient"
 
-  /api/admin/patient_registration:
+  /api/patient/patient_registration:
     post:
-      tags: # Assigning the 'admin' tag to this endpoint
-        - admin
+      tags: # Assigning the 'patient' tag to this endpoint
+        - Patient
       summary: Register a new patient
       description: Creates a new patient record
       consumes:
@@ -147,6 +154,10 @@ paths:
           description: Patient registration data
           schema:
             type: object
+            required:
+              - patientName
+              - age
+              - gender
             properties:
               patientName:
                 type: string
@@ -210,10 +221,10 @@ paths:
         400:
           description: Bad request, check request payload
 
-  /api/admin/{id}:
+  /api/patient/{id}:
     get:
-      tags: # Assigning the 'admin' tag to this endpoint
-        - admin
+      tags: # Assigning the 'patient' tag to this endpoint
+        - Patient
       summary: Get a patient by ID
       parameters:
         - name: id
@@ -234,8 +245,8 @@ paths:
               error:
                 type: string
     patch:
-      tags: # Assigning the 'admin' tag to this endpoint
-        - admin
+      tags: # Assigning the 'patient' tag to this endpoint
+        - Patient
       summary: Update a patient by ID
       parameters:
         - name: id
@@ -320,8 +331,8 @@ paths:
               patient:
                 type: object
     delete:
-      tags: # Assigning the 'admin' tag to this endpoint
-        - admin
+      tags: # Assigning the 'patient' tag to this endpoint
+        - Patient
       summary: Delete a patient by ID
       parameters:
         - name: id
@@ -338,12 +349,85 @@ paths:
               status:
                 type: string
 
+  /api/payment/all_payments/:
+    get:
+      summary: "Get all payments"
+      tags:
+        - "Payment"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/PatientPayment"
+
+  /api/payment/add_payment/:
+    post:
+      summary: "Create a new payment"
+      tags:
+        - "Payment"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Payment details"
+          required: true
+          schema:
+            $ref: "#/definitions/PatientPayment"
+
+      responses:
+        201:
+          description: "Payment created successfully"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+              patient_id:
+                type: "string"
+                default: "Id of created payment"
+            example:
+              - msg: success
+              - patient_id: "string"
+
+        400:
+          description: "Invalid request body"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+            example:
+              - msg: all fields are required and amount should be greater than 0
+              - msg: "Validation error: id not found "
+
+                # default: all fields are req...
+
+        500:
+          description: "server error"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+            example:
+              - msg: "Internal server error"
+
 definitions:
   User:
     type: object
+    required:
+      - firstName
+      - email
+      - userType
+      - password
     properties:
-      _id:
-        type: string
       firstName:
         type: string
       lastName:
@@ -352,15 +436,16 @@ definitions:
         type: string
       userType:
         type: string
+      password:
+        type: string
+        format: password
 
   Patient:
     type: object
-    
     required:
-      - firstName
-      - lastName
-      - email
-      - userType
+      - patientName
+      - gender
+      - age
     properties:
       patientName:
         type: string
@@ -418,3 +503,25 @@ definitions:
           village:
             type: string
             default: "NA"
+
+  PatientPayment:
+    type: object
+    properties:
+      patientId:
+        type: string
+        description: The ID of the patient associated with the payment
+      paymentType:
+        type: string
+        enum: ["daily", "15_days", "30_days"]
+        description: The type of payment
+      amount:
+        type: number
+        description: The amount of the payment
+      paymentDate:
+        type: string
+        format: date-time
+        description: The date of the payment
+    required:
+      - patientId
+      - paymentType
+      - amount
