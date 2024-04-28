@@ -60,27 +60,27 @@ async function deletePatientById(req, res) {
 }
 
 
-async function Payment(req, res) {   
-    const body = req.body;
-    if (!body || !body.paymentType || !body.amount || !body.paymentDate) {
-      return res.status(400).json({ msg: "all fields are req..." });
-    }
-    const result = await Patient.create({
-      patientName: body.patientName,
-      gender: body.gender,
-      age: body.age,
-      dob: body.dob,
-      contact: body.contact,
-      bloodGroup: body.bloodGroup,
-      weight: body.weight,
-      height: body.height,
-      complaint: body.complaint,
-      referredTo: body.referredTo,
-      relative: body.relative,
-      address: body.address,
-    });
-    return res.status(201).json({ msg: "success", patient_id: result._id });
-  }
+// async function Payment(req, res) {
+//     const body = req.body;
+//     if (!body || !body.paymentType || !body.amount || !body.paymentDate) {
+//       return res.status(400).json({ msg: "all fields are req..." });
+//     }
+//     const result = await Patient.create({
+//       patientName: body.patientName,
+//       gender: body.gender,
+//       age: body.age,
+//       dob: body.dob,
+//       contact: body.contact,
+//       bloodGroup: body.bloodGroup,
+//       weight: body.weight,
+//       height: body.height,
+//       complaint: body.complaint,
+//       referredTo: body.referredTo,
+//       relative: body.relative,
+//       address: body.address,
+//     });
+//     return res.status(201).json({ msg: "success", patient_id: result._id });
+//   }
 
 module.exports = {
   RegisterPatient,
