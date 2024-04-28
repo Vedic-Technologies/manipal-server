@@ -1,4 +1,4 @@
 {
-  "watch": ["index.js", "api.yaml"],
+  "watch": ["."],
   "ext": "js,json,mjs,yaml"
 }

@@ -355,6 +355,12 @@ definitions:
 
   Patient:
     type: object
+    
+    required:
+      - firstName
+      - lastName
+      - email
+      - userType
     properties:
       patientName:
         type: string

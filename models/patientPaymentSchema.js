@@ -1,15 +1,15 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const patientPaymentSchema = new mongoose.Schema(
   {
     patient: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Patient',
+      ref: "Patient",
       required: true,
     },
     paymentType: {
       type: String,
-      enum: ['daily', '15_days', '30_days'],
+      enum: ["daily", "15_days", "30_days"],
       required: true,
     },
     amount: {
@@ -24,6 +24,6 @@ const patientPaymentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const PatientPayment = mongoose.model('PatientPayment', patientPaymentSchema);
+const PatientPayment = mongoose.model("PatientPayment", patientPaymentSchema);
 
 module.exports = PatientPayment;
