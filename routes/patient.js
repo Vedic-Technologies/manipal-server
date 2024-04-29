@@ -15,7 +15,7 @@ router.route("/patient_registration").post(RegisterPatient);
 router
   .route("/:id")
   .get(GetPatientById)
-  .patch(UpdatePatientById) 
+  .patch(UpdatePatientById)
   .delete(deletePatientById);
 
 module.exports = router;
