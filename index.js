@@ -19,6 +19,7 @@ dotenv.config();
 const PORT = process.env.PORT;
 const URI = process.env.URI;
 app.use(cors());
+
 // Connection
 connectMongoDb(URI);
 

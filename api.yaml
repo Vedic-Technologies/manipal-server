@@ -14,11 +14,11 @@ tags:
   - name: Admin
     description: Endpoints related to admin operations
 
-host: manipal-server.onrender.com
-# host: localhost:8000
+# host: manipal-server.onrender.com
+host: localhost:8000
 schemes:
-  - https
-  # - http
+  # - https
+  - http
 
 consumes:
   - application/json
@@ -36,9 +36,7 @@ paths:
         200:
           description: Successful response
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/User"
+            $ref: "#/definitions/User"
 
   /api/users/{id}:
     get:
@@ -113,7 +111,7 @@ paths:
           description: User registration data
           required: true
           schema:
-            $ref: "#/definitions/NewUser"
+            $ref: "#/definitions/User"
       responses:
         201:
           description: User created successfully
@@ -136,7 +134,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/patient"
+              $ref: "#/definitions/Patient"
 
   /api/patient/patient_registration:
     post:
@@ -153,68 +151,7 @@ paths:
           name: patient
           description: Patient registration data
           schema:
-            type: object
-            required:
-              - patientName
-              - age
-              - gender
-            properties:
-              patientName:
-                type: string
-              gender:
-                type: string
-              age:
-                type: number
-                default: 45
-              dob:
-                type: string
-                format: date
-              contact:
-                type: number
-                default: 123456789
-              email:
-                type: string
-                default: "NA"
-              IdProof:
-                type: object
-                properties:
-                  IdType:
-                    type: string
-                    default: "NA"
-                  Id:
-                    type: string
-                    default: "NA"
-              bloodGroup:
-                type: string
-                default: "NA"
-              weight:
-                type: number
-              height:
-                type: number
-              relative:
-                type: string
-                default: "NA"
-              complaint:
-                type: string
-              referredTo:
-                type: string
-                default: "NA"
-              address:
-                type: object
-                properties:
-                  country:
-                    type: string
-                    default: "India"
-                  state:
-                    type: string
-                  district:
-                    type: string
-                  pin_code:
-                    type: string
-                    default: "NA"
-                  village:
-                    type: string
-                    default: "NA"
+            $ref: "#/definitions/Patient"
       responses:
         200:
           description: Successfully registered a new patient
@@ -259,70 +196,14 @@ paths:
           description: Patient data to update
           required: true
           schema:
-            type: object
-            properties:
-              patientName:
-                type: string
-              gender:
-                type: string
-              age:
-                type: number
-                default: 45
-              dob:
-                type: string
-                format: date
-              contact:
-                type: number
-                default: 123456789
-              email:
-                type: string
-                default: "NA"
-              IdProof:
-                type: object
-                properties:
-                  IdType:
-                    type: string
-                    default: "NA"
-                  Id:
-                    type: string
-                    default: "NA"
-              bloodGroup:
-                type: string
-                default: "NA"
-              weight:
-                type: number
-              height:
-                type: number
-              relative:
-                type: string
-                default: "NA"
-              complaint:
-                type: string
-              referredTo:
-                type: string
-                default: "NA"
-              address:
-                type: object
-                properties:
-                  country:
-                    type: string
-                    default: "India"
-                  state:
-                    type: string
-                  district:
-                    type: string
-                  pin_code:
-                    type: string
-                    default: "NA"
-                  village:
-                    type: string
-                    default: "NA"
+            $ref: "#/definitions/Patient"
+
       responses:
         200:
           description: Update successful
           examples:
             status: Update Successful
-            patient: {}
+            patient: object
           schema:
             type: object
             properties:
@@ -393,8 +274,8 @@ paths:
                 type: "string"
                 default: "Id of created payment"
             example:
-              - msg: success
-              - patient_id: "string"
+              msg: success
+              patient_id: "string"
 
         400:
           description: "Invalid request body"
@@ -407,8 +288,6 @@ paths:
               - msg: all fields are required and amount should be greater than 0
               - msg: "Validation error: id not found "
 
-                # default: all fields are req...
-
         500:
           description: "server error"
           schema:
@@ -417,11 +296,10 @@ paths:
               msg:
                 type: "string"
             example:
-              - msg: "Internal server error"
+              msg: "Internal server error"
 
 definitions:
   User:
-    type: object
     required:
       - firstName
       - email
@@ -441,7 +319,6 @@ definitions:
         format: password
 
   Patient:
-    type: object
     required:
       - patientName
       - gender
@@ -453,7 +330,7 @@ definitions:
         type: string
       age:
         type: number
-        default: 45
+        example: 46
       dob:
         type: string
         format: date
@@ -516,6 +393,7 @@ definitions:
         description: The type of payment
       amount:
         type: number
+        example: 100
         description: The amount of the payment
       paymentDate:
         type: string
