@@ -7,6 +7,7 @@ const YAML = require("yamljs");
 const { restrictToLoggedin } = require("./middlewares/auth.js");
 const userRouter = require("./routes/user");
 const patientRouter = require("./routes/patient.js");
+const doctorRouter = require("./routes/doctor.js");
 const paymentRouter = require("./routes/payment.js");
 
 // const adminRouter = require("./routes/admin");
@@ -35,6 +36,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 //ROUTES
 app.use("/api/users", userRouter);
 app.use("/api/patient", patientRouter);
+app.use("/api/doctors", doctorRouter);
 app.use("/api/payment", paymentRouter);
 
 // app.use("/api/admin", adminRouter);

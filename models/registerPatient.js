@@ -31,6 +31,11 @@ const patientSchema = new mongoose.Schema(
       default: "NA",
     },
 
+    active: {
+      type: Boolean,
+      default: false,
+    },
+
     IdProof: {
       IdType: {
         type: String,
