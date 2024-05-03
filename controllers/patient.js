@@ -16,10 +16,9 @@ async function RegisterPatient(req, res) {
     format: "jpg",
   };
 
+  // const filePath = body.image.replace(/\//g, "\ " );
 
-  const filePath = body.image.replace(/\//g, "\\");
-
-  cloudinary.uploader.upload(filePath, async (error, result) => {
+  cloudinary.uploader.upload(body.image, async (error, result) => {
     if (error) {
       console.log(error);
       return res.status(400).json({ error: error.message });
