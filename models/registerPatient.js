@@ -20,7 +20,9 @@ const patientSchema = new mongoose.Schema(
     dob: {
       type: Date,
     },
-
+    image: {
+      type: String,
+    },
     contact: {
       type: Number,
       default: 123456789,

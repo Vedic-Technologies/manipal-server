@@ -18,7 +18,7 @@ host: manipal-server.onrender.com
 # host: localhost:8000
 schemes:
   - https
-  # - http
+  - http
 
 consumes:
   - application/json
@@ -430,6 +430,9 @@ definitions:
       dob:
         type: string
         format: date
+      image:
+        type: string
+        example: https://domain/encryptions/folder/image_name
       contact:
         type: number
         default: 123456789
@@ -516,6 +519,9 @@ definitions:
       phone:
         type: integer
         format: int64
+      image:
+        type: string
+        example: https://image_url
       address:
         type: string
       availability:
