@@ -1,5 +1,7 @@
 const Patient = require("../models/registerPatient");
 const cloudinary = require("../cloudinary");
+const fs = require("fs");
+const path = require("path");
 
 async function RegisterPatient(req, res) {
   // console.log(req.body);
@@ -13,40 +15,41 @@ async function RegisterPatient(req, res) {
     quality: "auto:good",
     format: "jpg",
   };
-  cloudinary.uploader.upload(
-    body.image,
-    { ...uploadOptions },
-    async (error, result) => {
-      if (error) {
-        return res.status(400).json({ error: error.message });
-      }
-      try {
-        // Create a new patient with image URL in database
-        const newPatient = new Patient({
-          patientName: body.patientName,
-          gender: body.gender,
-          age: body.age,
-          dob: body.dob,
-          image: result.secure_url,
-          contact: body.contact,
-          email: body.email,
-          active: body.active,
-          IdProof: body.IdProof,
-          bloodGroup: body.bloodGroup,
-          weight: body.weight,
-          height: body.height,
-          relative: body.relative,
-          complaint: body.complaint,
-          referredTo: body.referredTo,
-          address: body.address,
-        });
-        const savedPatient = await newPatient.save();
-        res.status(201).json({ success: true, patient: savedPatient });
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
+
+
+  const filePath = body.image.replace(/\//g, "\\");
+
+  cloudinary.uploader.upload(filePath, async (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(400).json({ error: error.message });
     }
-  );
+    try {
+      // Create a new patient with image URL in database
+      const newPatient = new Patient({
+        patientName: body.patientName,
+        gender: body.gender,
+        age: body.age,
+        dob: body.dob,
+        image: result.secure_url,
+        contact: body.contact,
+        email: body.email,
+        active: body.active,
+        IdProof: body.IdProof,
+        bloodGroup: body.bloodGroup,
+        weight: body.weight,
+        height: body.height,
+        relative: body.relative,
+        complaint: body.complaint,
+        referredTo: body.referredTo,
+        address: body.address,
+      });
+      const savedPatient = await newPatient.save();
+      res.status(201).json({ success: true, patient: savedPatient });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
 }
 
 async function getRegisteredPatients(req, res) {
