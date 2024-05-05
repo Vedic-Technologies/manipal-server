@@ -2,68 +2,55 @@ const Patient = require("../models/registerPatient");
 const cloudinary = require("../cloudinary");
 const fs = require("fs");
 const path = require("path");
+const multer = require("multer");
 
 async function RegisterPatient(req, res) {
-  // console.log(req.body);
+  // console.log(req)
+  const file = req.files.photo
+  console.log(file, "5488888888888")
   const body = req.body;
-  if (!body || !body.patientName || !body.gender || !body.age) {
-    return res.status(400).json({ msg: "all fields are req..." });
-  }
+  //  if (!body || !body.patientName || !body.gender || !body.age) {
+  //     return res.status(400).json({ msg: "all fields are req..." });
+  //   }
 
-  const uploadOptions = {
-    folder: "patient_images",
-    quality: "auto:good",
-    format: "jpg",
-  };
-
-  // const filePath = body.image.replace(/\//g, "\ " );
-
-  cloudinary.uploader.upload(body.image, async (error, result) => {
-    if (error) {
-      console.log(error);
-      return res.status(400).json({ error: error.message });
-    }
-    try {
-      // Create a new patient with image URL in database
-      const newPatient = new Patient({
-        patientName: body.patientName,
-        gender: body.gender,
-        age: body.age,
-        dob: body.dob,
-        image: result.secure_url,
-        contact: body.contact,
-        email: body.email,
-        active: body.active,
-        IdProof: body.IdProof,
-        bloodGroup: body.bloodGroup,
-        weight: body.weight,
-        height: body.height,
-        relative: body.relative,
-        complaint: body.complaint,
-        referredTo: body.referredTo,
-        address: body.address,
+  console.log(file);
+  cloudinary.uploader.upload(file.tempFilePath, (error, result) => {
+    const newPatient = new Patient({
+      patientName: body.patientName,
+      gender: body.gender,
+      age: body.age,
+      dob: body.dob,
+      image: result.secure_url,
+      contact: body.contact,
+      email: body.email,
+      active: body.active,
+      IdProof: body.IdProof,
+      bloodGroup: body.bloodGroup,
+      weight: body.weight,
+      height: body.height,
+      relative: body.relative,
+      complaint: body.complaint,
+      referredTo: body.referredTo,
+      address: body.address,
+    });
+    newPatient
+      .save()
+      .then((result) => {
+        console.log(result);
+        res.status(200).json({
+          newPatient: result,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json({
+          error: err,
+        });
       });
-      const savedPatient = await newPatient.save();
-      res.status(201).json({ success: true, patient: savedPatient });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
   });
 }
 
 async function getRegisteredPatients(req, res) {
-  try {
-    const re = await cloudinary.uploader.upload(
-      "./controllers/pc.png"
-      //  "https://upload.wikimedia.org/wikipedia/commons/a/ae/Olympic_flag.jpg"
-    );
-
-    console.log(re);
-  } catch (error) {
-    console.error("An error occurred:", error);
-  }
-
-  // console.log(result);
   const allPatients = await Patient.find({});
   return res.json(allPatients);
 }

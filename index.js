@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const bodyParser = require("body-parser");
 const swaggerJSDocs = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
@@ -13,6 +14,7 @@ const paymentRouter = require("./routes/payment.js");
 // const adminRouter = require("./routes/admin");
 const { connectMongoDb } = require("./connection.js");
 const cookieParser = require("cookie-parser");
+const fileUpload = require("express-fileupload");
 const dotenv = require("dotenv");
 const cors = require("cors");
 dotenv.config();
@@ -25,7 +27,10 @@ app.use(cors());
 connectMongoDb(URI);
 
 // MIDDLEWARE - plugin
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json()); // Parse application/json
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(fileUpload({ useTempFiles: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.json());
 // app.use(logReqRes("log.txt"))
