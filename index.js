@@ -14,7 +14,7 @@ const paymentRouter = require("./routes/payment.js");
 // const adminRouter = require("./routes/admin");
 const { connectMongoDb } = require("./connection.js");
 const cookieParser = require("cookie-parser");
-const fileUpload = require("express-fileupload");
+// const fileUpload = require("express-fileupload");
 const dotenv = require("dotenv");
 const cors = require("cors");
 dotenv.config();
@@ -29,7 +29,7 @@ connectMongoDb(URI);
 // MIDDLEWARE - plugin
 app.use(bodyParser.json()); // Parse application/json
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(fileUpload({ useTempFiles: true }));
+// app.use(fileUpload({ useTempFiles: true }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.json());
