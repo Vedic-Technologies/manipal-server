@@ -1,21 +1,15 @@
 const Patient = require("../models/registerPatient");
 const cloudinary = require("../cloudinary");
-const fs = require("fs");
-const path = require("path");
-const multer = require("multer");
 
 async function RegisterPatient(req, res) {
-  // console.log(req)
-  const file = req.files.photo
-  console.log(file, "5488888888888")
   const body = req.body;
-  //  if (!body || !body.patientName || !body.gender || !body.age) {
-  //     return res.status(400).json({ msg: "all fields are req..." });
-  //   }
+  if (!body || !body.patientName || !body.gender || !body.age) {
+    return res.status(400).json({ msg: "all fields are req..." });
+  }
 
-  console.log(file);
-  cloudinary.uploader.upload(file.tempFilePath, (error, result) => {
-    const newPatient = new Patient({
+  try {
+    const result = await cloudinary.uploader.upload(body.image);
+    const newPatient = await Patient({
       patientName: body.patientName,
       gender: body.gender,
       age: body.age,
@@ -47,7 +41,9 @@ async function RegisterPatient(req, res) {
           error: err,
         });
       });
-  });
+  } catch (error) {
+    res.json({ error: error });
+  }
 }
 
 async function getRegisteredPatients(req, res) {
