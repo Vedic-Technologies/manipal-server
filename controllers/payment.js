@@ -30,97 +30,7 @@ async function handleNewPayment(req, res) {
   }
 }
 
-// async function GetAllPayment(req, res) {
-//   try {
-//     // Step 1: Retrieve data from both tables
-//     const allPayments = await Payment.find({});
-//     const allPatients = await Patient.find({});
-
-//     // Step 2: Combine data with a loop
-//     const combinedData = [];
-
-//     for (const payment of allPayments) {
-//       const patient = await Patient.findById(payment.patientId);
-//       if (patient) {
-//         // Construct paymentInfo object with patient information
-//         const paymentInfo = {
-//           ...payment,
-//           patientInfo: {
-//             patientName: patient.patientName || "",
-//             contact: patient.contact || "",
-//             active: patient.active || "",
-//             image: patient.image || "",
-//           },
-//         };
-//         combinedData.push(paymentInfo);
-//       }
-//     }
-//     const combinedDataToSend = combinedData.map((item) => ({
-//       payment: item._doc,
-//       patientInfo: item.patientInfo,
-//     }));
-
-//     return res.json(combinedDataToSend);
-
-//   } catch (error) {
-//     console.error("Error:", error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// }
-
-// async function GetAllPayment_2(req, res) {
-//   //checking
-//   try {
-//     // Step 1: Retrieve data from both tables
-
-//     // const Data = [];
-//     // // Step 2: Combine data using a more optimized approach
-//     // const combinedData = allPayments.map((payment) => {
-//     //   const patient = allPatients.filter(
-//     //     (patient) => patient.patientId === payment.patientId
-//     //   );
-//     //   if (patient) {
-//     //     const data = {
-//     //       name: patient.patientName,
-//     //     };
-
-//     //     Data.push(data);
-//     //     console.log(Data);
-//     //   }
-//     // });
-//     const allPayments = await Payment.find({});
-//     console.log(allPayments.length);
-//     const allPatients = await Patient.find({});
-//     const Data = [];
-//     // Step 2: Combine data using a more optimized approach
-//     // const combinedData = allPatients.map((payment) =>
-//     //   allPayments.find((patient) => patient.patientId === payment.patientId)
-//     // );
-
-//     const combinedData = allPayments
-//       .filter((payment) =>
-//         allPatients.some((patient) => patient.patientId === payment.patientId)
-//       )
-//       .map((payment) => {
-//         const patient = allPatients.find(
-//           (patient) => patient.patientId === payment.patientId
-//         );
-//         return {
-//           payment,
-//           patient,
-//         };
-//       });
-
-//     return res.json(combinedData);
-//   } catch (err) {
-//     console.error("Error:", err);
-//     return res.status(500).json({ error: "Internal Server Error" });
-//   }
-// }
-
 async function GetAllPayment(req, res) {
-  console.log(Patient);
-  const allPayments = await Payment.find({});
 
   try {
     const allPayments = await Payment.find({}).populate({
@@ -152,7 +62,6 @@ async function GetAllPayment(req, res) {
   }
 }
 
-
 async function GetPaymentById(req, res) {
   const patient = await Patient.findById(req.params.id);
 
@@ -168,13 +77,40 @@ async function GetPaymentById(req, res) {
   return res.json(data);
 }
 
+async function GetPaymentById(req, res) {
+  const payment = await Payment.findById(req.params.id);
+  return res.json(payment);
+}
+
+async function UpdatePaymentById(req, res) {
+  try {
+    const paymentUpdates = req.body;
+    const payment = await Payment.findById(req.params.id);
+
+    if (!payment) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+    Object.keys(paymentUpdates).forEach((key) => {
+      payment[key] = paymentUpdates[key];
+    });
+
+    const updatedPayment = await payment.save();
+    return res.json({ status: "update success", payment: updatedPayment });
+  } catch (error) {
+    console.error("Error updating patient:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
+
 async function deletePaymentById(req, res) {
   await Payment.findByIdAndDelete(req.params.id);
   res.json({ status: "deleted successfully" });
 }
 
 module.exports = {
-  handleNewPayment,
   GetAllPayment,
+  GetPaymentById,
+  handleNewPayment,
+  UpdatePaymentById,
   deletePaymentById,
 };

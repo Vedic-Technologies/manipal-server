@@ -56,12 +56,22 @@ async function GetPatientById(req, res) {
   const patient = await Patient.findById(req.params.id);
 
   const payment = await Payment.find({ patientId: req.params.id });
-  // console.log(payment)
+  console.log(payment);
+
+  const paymentData = payment.map((payment) => {
+    return {
+      _id: payment._id,
+      paymentType: payment.paymentType,
+      amount: payment.amount,
+      paymentDate: payment.paymentDate,
+    };
+  });
+
   if (!patient) return res.status(404).json({ error: "user not found" });
 
   const data = {
-    payments: payment,
-    ...patient._doc
+    payments: paymentData,
+    ...patient._doc,
   };
   console.log(data);
   return res.json(data);

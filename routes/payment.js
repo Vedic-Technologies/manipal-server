@@ -1,8 +1,10 @@
 const express = require("express");
 
 const {
-  handleNewPayment,
   GetAllPayment,
+  GetPaymentById,
+  handleNewPayment,
+  UpdatePaymentById,
   deletePaymentById,
 } = require("../controllers/payment");
 
@@ -13,8 +15,8 @@ router.route("/add_payment").post(handleNewPayment);
 
 router
   .route("/:id")
-  // .get(GetPaymentById);
-  //   .patch(UpdatePatientById)
+  .get(GetPaymentById)
+  .patch(UpdatePaymentById)
   .delete(deletePaymentById);
 
 module.exports = router;
