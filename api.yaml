@@ -14,10 +14,10 @@ tags:
   # - name: Admin
   #   description: Endpoints related to admin operations
 
-host: manipal-server.onrender.com
-# host: localhost:8000
+# host: manipal-server.onrender.com
+host: localhost:8000
 schemes:
-  - https
+  # - https
   - http
 
 consumes:
@@ -301,55 +301,24 @@ paths:
             example:
               msg: "Internal server error"
 
-  /api/doctors/all_doctors/:
+  /api/payment/{id}:
     get:
       tags:
-        - doctor
-      summary: Get all doctors
-      responses:
-        200:
-          description: Successful response
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Doctor"
-
-  /api/doctors/add_doctor/:
-    post:
-      tags:
-        - doctor
-      summary: Create a new doctor
-      parameters:
-        - in: body
-          name: doctor
-          description: Doctor data to create
-          required: true
-          schema:
-            $ref: "#/definitions/Doctor"
-      responses:
-        201:
-          description: Doctor created successfully
-          schema:
-            $ref: "#/definitions/Doctor"
-
-  /api/doctors/{id}:
-    get:
-      tags:
-        - doctor
-      summary: Get a doctor by ID
+        - Payment
+      summary: Get a payment by ID
       parameters:
         - name: id
           in: path
-          description: ID of the doctor to retrieve
+          description: ID of the payment to retrieve
           required: true
           type: string
       responses:
         200:
           description: Successful response
           schema:
-            $ref: "#/definitions/Doctor"
+            $ref: "#/definitions/PatientPayment"
         404:
-          description: Doctor not found
+          description: payment not found
           schema:
             type: object
             properties:
@@ -358,44 +327,140 @@ paths:
 
     patch:
       tags:
-        - doctor
-      summary: Update a doctor by ID
+        - Payment
+      summary: Update a payment by ID
       parameters:
         - name: id
           in: path
-          description: ID of the doctor to update
+          description: ID of the payment to update
           required: true
           type: string
         - in: body
-          name: doctor
-          description: Doctor data to update
+          name: payment
+          description: payment data to update
           required: true
           schema:
-            $ref: "#/definitions/Doctor"
+            $ref: "#/definitions/PatientPayment"
       responses:
         200:
           description: Update successful
           schema:
-            $ref: "#/definitions/Doctor"
+            $ref: "#/definitions/PatientPayment"
 
     delete:
       tags:
-        - doctor
-      summary: Delete a doctor by ID
+        - Payment
+      summary: Delete a payment by ID
       parameters:
         - name: id
           in: path
-          description: ID of the doctor to delete
+          description: ID of the payment to delete
           required: true
           type: string
       responses:
         200:
           description: Deletion successful
-          schema:
+          schema: 
             type: object
             properties:
               status:
                 type: string
+
+  # /api/doctors/all_doctors/:
+  #   get:
+  #     tags:
+  #       - doctor
+  #     summary: Get all doctors
+  #     responses:
+  #       200:
+  #         description: Successful response
+  #         schema:
+  #           type: array
+  #           items:
+  #             $ref: "#/definitions/Doctor"
+
+  # /api/doctors/add_doctor/:
+  #   post:
+  #     tags:
+  #       - doctor
+  #     summary: Create a new doctor
+  #     parameters:
+  #       - in: body
+  #         name: doctor
+  #         description: Doctor data to create
+  #         required: true
+  #         schema:
+  #           $ref: "#/definitions/Doctor"
+  #     responses:
+  #       201:
+  #         description: Doctor created successfully
+  #         schema:
+  #           $ref: "#/definitions/Doctor"
+
+  # /api/doctors/{id}:
+  #   get:
+  #     tags:
+  #       - doctor
+  #     summary: Get a doctor by ID
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: ID of the doctor to retrieve
+  #         required: true
+  #         type: string
+  #     responses:
+  #       200:
+  #         description: Successful response
+  #         schema:
+  #           $ref: "#/definitions/Doctor"
+  #       404:
+  #         description: Doctor not found
+  #         schema:
+  #           type: object
+  #           properties:
+  #             error:
+  #               type: string
+
+  #   patch:
+  #     tags:
+  #       - doctor
+  #     summary: Update a doctor by ID
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: ID of the doctor to update
+  #         required: true
+  #         type: string
+  #       - in: body
+  #         name: doctor
+  #         description: Doctor data to update
+  #         required: true
+  #         schema:
+  #           $ref: "#/definitions/Doctor"
+  #     responses:
+  #       200:
+  #         description: Update successful
+  #         schema:
+  #           $ref: "#/definitions/Doctor"
+
+  #   delete:
+  #     tags:
+  #       - doctor
+  #     summary: Delete a doctor by ID
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: ID of the doctor to delete
+  #         required: true
+  #         type: string
+  #     responses:
+  #       200:
+  #         description: Deletion successful
+  #         schema:
+  #           type: object
+  #           properties:
+  #             status:
+  #               type: string
 
 definitions:
   User:
