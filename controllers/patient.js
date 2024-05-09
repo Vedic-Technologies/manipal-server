@@ -1,4 +1,5 @@
 const Patient = require("../models/registerPatient");
+const Payment = require("../models/patientPaymentSchema");
 const cloudinary = require("../cloudinary");
 
 async function RegisterPatient(req, res) {
@@ -53,14 +54,24 @@ async function getRegisteredPatients(req, res) {
 
 async function GetPatientById(req, res) {
   const patient = await Patient.findById(req.params.id);
+
+  const payment = await Payment.find({ patientId: req.params.id });
+  // console.log(payment)
   if (!patient) return res.status(404).json({ error: "user not found" });
-  return res.json(patient);
+
+  const data = {
+    payments: payment,
+    ...patient._doc
+  };
+  console.log(data);
+  return res.json(data);
 }
 
 async function UpdatePatientById(req, res) {
   try {
     const patientUpdates = req.body;
     const patient = await Patient.findById(req.params.id);
+
     if (!patient) {
       return res.status(404).json({ error: "Patient not found" });
     }
