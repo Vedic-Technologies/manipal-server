@@ -14,11 +14,11 @@ tags:
   # - name: Admin
   #   description: Endpoints related to admin operations
 
-# host: manipal-server.onrender.com
-host: localhost:8000
+host: manipal-server.onrender.com
+# host: localhost:8000
 schemes:
   # - https
-  - http
+  # - http
 
 consumes:
   - application/json
