@@ -17,7 +17,7 @@ tags:
 host: manipal-server.onrender.com
 # host: localhost:8000
 schemes:
-  # - https
+  - https
   # - http
 
 consumes:
@@ -143,7 +143,7 @@ paths:
       summary: Register a new patient
       description: Creates a new patient record
       consumes:
-        - multipart/form-data # Specify that the endpoint accepts multipart form data
+        # - multipart/form-data # Specify that the endpoint accepts multipart form data
         - application/json
       parameters:
         - in: formData
@@ -360,7 +360,7 @@ paths:
       responses:
         200:
           description: Deletion successful
-          schema: 
+          schema:
             type: object
             properties:
               status:
@@ -483,73 +483,127 @@ definitions:
         format: password
 
   Patient:
-    required:
-      - patientName
-      - gender
-      - age
+    type: object
     properties:
       patientName:
         type: string
       gender:
         type: string
       age:
-        type: number
-        example: 46
+        type: integer
       dob:
         type: string
         format: date
-      contact:
-        type: number
-        default: 123456789
       image:
         type: string
-        example: https://image_url
+      contact:
+        type: string
       email:
         type: string
-        default: "NA"
-      active:
+      occupation:
         type: string
-        default: false
+      HOPI:
+        type: string
+      familyHistory:
+        type: string
+      environmentalHistory:
+        type: string
+      HR:
+        type: string
+      BP:
+        type: string
+      RR:
+        type: string
+      examination:
+        type: string
+      spine:
+        type: string
+      specialTest:
+        type: string
+      deformity:
+        type: string
+      respiratoryType:
+        type: string
+      breathSound:
+        type: string
+      examinationExtremity:
+        type: object
+        properties:
+          sensory:
+            type: object
+            properties:
+              left:
+                type: string
+              right:
+                type: string
+          motor:
+            type: object
+            properties:
+              left:
+                type: string
+              right:
+                type: string
+      gaitEvaluation:
+        type: string
+      functionalAssessment:
+        type: string
+      disability:
+        type: string
+      treatmentGoal:
+        type: string
+      tendonJerks:
+        type: object
+        properties:
+          Knee:
+            type: string
+          ankle:
+            type: string
+          planter:
+            type: string
+          biceps:
+            type: string
+          triceps:
+            type: string
+          BR:
+            type: string
+          babinski:
+            type: string
+          clonus:
+            type: string
+      active:
+        type: boolean
       IdProof:
         type: object
         properties:
           IdType:
             type: string
-            default: "NA"
           Id:
             type: string
-            default: "NA"
       bloodGroup:
         type: string
-        default: "NA"
       weight:
         type: number
       height:
         type: number
       relative:
         type: string
-        default: "NA"
       complaint:
         type: string
       referredTo:
         type: string
-        default: "NA"
       address:
         type: object
         properties:
           country:
             type: string
-            default: "India"
           state:
             type: string
           district:
             type: string
           pin_code:
             type: string
-            default: "NA"
           village:
             type: string
-            default: "NA"
 
   PatientPayment:
     type: object

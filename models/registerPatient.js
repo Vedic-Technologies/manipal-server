@@ -32,6 +32,47 @@ const patientSchema = new mongoose.Schema(
       type: String,
       default: "NA",
     },
+    occupation: {
+      type: String,
+      default: "NA",
+    },
+    HOPI: String,
+    familyHistory: String,
+    environmentalHistory: String,
+    HR: String,
+    BP: String,
+    RR: String,
+    examination: String,
+    spine: String,
+    specialTest: String,
+    deformity: String,
+    respiratoryType: String,
+    breathSound: String,
+    examinationExtremity: {
+      sensory: {
+        left: String,
+        right: String,
+      },
+      motor: {
+        left: String,
+        right: String,
+      },
+    },
+    gaitEvaluation: String,
+    functionalAssessment: String,
+    disability: String,
+    treatmentGoal: String,
+
+    tendonJerks: {
+      Knee: String,
+      ankle: String,
+      planter: String,
+      biceps: String,
+      triceps: String,
+      BR: String,
+      babinski: String,
+      clonus: String,
+    },
 
     active: {
       type: Boolean,

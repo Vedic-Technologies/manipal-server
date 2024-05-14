@@ -9,15 +9,38 @@ async function RegisterPatient(req, res) {
   }
 
   try {
-    const result = await cloudinary.uploader.upload(body.image);
-    const newPatient = await Patient({
+    let imageUrl = null;
+    if (body.image) {
+      const result = await cloudinary.uploader.upload(body.image);
+      imageUrl = result.secure_url;
+    }
+    const newPatient = new Patient({
       patientName: body.patientName,
       gender: body.gender,
       age: body.age,
       dob: body.dob,
-      image: result.secure_url,
+      image: imageUrl,
       contact: body.contact,
       email: body.email,
+      occupation: body.occupation,
+      HOPI: body.HOPI,
+      familyHistory: body.familyHistory,
+      environmentalHistory: body.environmentalHistory,
+      HR: body.HR,
+      BP: body.BP,
+      RR: body.RR,
+      examination: body.examination,
+      spine: body.spine,
+      specialTest: body.specialTest,
+      deformity: body.deformity,
+      respiratoryType: body.respiratoryType,
+      breathSound: body.breathSound,
+      examinationExtremity: body.examinationExtremity,
+      gaitEvaluation: body.gaitEvaluation,
+      functionalAssessment: body.functionalAssessment,
+      disability: body.disability,
+      treatmentGoal: body.treatmentGoal,
+      tendonJerks: body.tendonJerks,
       active: body.active,
       IdProof: body.IdProof,
       bloodGroup: body.bloodGroup,
