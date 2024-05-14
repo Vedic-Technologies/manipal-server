@@ -84,7 +84,7 @@ async function ValidateUserLogin(req, res) {
   setUser(sessionID, user);
   res.cookie("uid", sessionID);
   // return res.redirect("/home");
-  return res.json({ message: "Login successful", userId: user._id });
+  return res.json({ message: "Login successful", user: user });
 }
 
 module.exports = {
