@@ -55,7 +55,8 @@ async function CreateNewUser(req, res) {
     lastName: body.lastName,
     email: body.email,
     password: body.password,
-    // gender: body.gender,
+    contact: body.contact,
+    gender: body.gender,
     userType: body.userType,
   });
   return res.status(201).json({ msg: "success", id: result._id });
