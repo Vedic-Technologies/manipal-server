@@ -31,12 +31,11 @@ async function handleNewPayment(req, res) {
 }
 
 async function GetAllPayment(req, res) {
-
   try {
     const allPayments = await Payment.find({}).populate({
       path: "patientId",
       model: "patient",
-      select: "patientName contact image active", // Choose the fields you want to include
+      select: "patientName _id contact image active", // Choose the fields you want to include
     });
 
     console.log(allPayments);
@@ -44,10 +43,12 @@ async function GetAllPayment(req, res) {
     // Optionally, enhance data format here if needed
     const paymentsWithPatientInfo = allPayments.map((payment) => ({
       _id: payment._id,
+      patientId: payment.patientId._id,
       paymentType: payment.paymentType,
       amount: payment.amount,
       paymentDate: payment.paymentDate,
       patient: {
+        // _id: payment.patientId._id,
         name: payment.patientId?.patientName,
         active: payment.patientId?.active,
         contact: payment.patientId?.contact,
