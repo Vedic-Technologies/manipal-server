@@ -74,6 +74,11 @@ const patientSchema = new mongoose.Schema(
       clonus: String,
     },
 
+    checkUp_status: {
+      type: Boolean,
+      default: false,
+    },
+
     active: {
       type: Boolean,
       default: false,
