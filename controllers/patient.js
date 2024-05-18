@@ -143,8 +143,12 @@ async function UpdatePatientById(req, res) {
 }
 
 async function deletePatientById(req, res) {
-  await Patient.findByIdAndDelete(req.params.id);
-  res.json({ status: "deleted successfully" });
+  try {
+    await Patient.findByIdAndDelete(req.params.id);
+    res.json({ status: "deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({ error: "Patient not found" });
+  }
 }
 
 module.exports = {

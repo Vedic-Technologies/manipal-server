@@ -63,24 +63,28 @@ async function GetAllPayment(req, res) {
   }
 }
 
+// async function GetPaymentById(req, res) {
+//   const patient = await Patient.findById(req.params.id);
+
+//   const payment = await Payment.find({ patientId: req.params.id });
+//   // console.log(payment)
+//   if (!patient) return res.status(404).json({ error: "user not found" });
+
+//   const data = {
+//     ...patient._doc,
+//     ...payment,
+//   };
+//   console.log(data);
+//   return res.json(data);
+// }
+
 async function GetPaymentById(req, res) {
-  const patient = await Patient.findById(req.params.id);
-
-  const payment = await Payment.find({ patientId: req.params.id });
-  // console.log(payment)
-  if (!patient) return res.status(404).json({ error: "user not found" });
-
-  const data = {
-    ...patient._doc,
-    ...payment,
-  };
-  console.log(data);
-  return res.json(data);
-}
-
-async function GetPaymentById(req, res) {
-  const payment = await Payment.findById(req.params.id);
-  return res.json(payment);
+  try {
+    const payment = await Payment.findById(req.params.id);
+    return res.json(payment);
+  } catch (error) {
+    return res.status(404).json({ error: "payment not found" });
+  }
 }
 
 async function UpdatePaymentById(req, res) {
@@ -104,8 +108,12 @@ async function UpdatePaymentById(req, res) {
 }
 
 async function deletePaymentById(req, res) {
-  await Payment.findByIdAndDelete(req.params.id);
-  res.json({ status: "deleted successfully" });
+  try {
+    await Payment.findByIdAndDelete(req.params.id);
+    res.json({ status: "deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({ error: "payment not found" });
+  }
 }
 
 module.exports = {
