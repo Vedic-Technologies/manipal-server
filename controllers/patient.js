@@ -41,6 +41,7 @@ async function RegisterPatient(req, res) {
       disability: body.disability,
       treatmentGoal: body.treatmentGoal,
       tendonJerks: body.tendonJerks,
+      checkUp_status: body.checkUp_status,
       active: body.active,
       IdProof: body.IdProof,
       bloodGroup: body.bloodGroup,
