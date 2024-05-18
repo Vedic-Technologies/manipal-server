@@ -1,7 +1,7 @@
 const Patient = require("../models/registerPatient");
 const Payment = require("../models/patientPaymentSchema");
 const cloudinary = require("../cloudinary");
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 async function RegisterPatient(req, res) {
   const body = req.body;
@@ -94,7 +94,7 @@ async function GetPatientById(req, res) {
 
     // Fetch payment data
     const payments = await Payment.find({ patientId: patientId });
-    if (!payments || payments.length === 0) {
+    if (!payments) {
       return res
         .status(404)
         .json({ error: "No payments found for the patient" });
