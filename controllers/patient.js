@@ -1,6 +1,7 @@
 const Patient = require("../models/registerPatient");
 const Payment = require("../models/patientPaymentSchema");
 const cloudinary = require("../cloudinary");
+const mongoose = require("mongoose")
 
 async function RegisterPatient(req, res) {
   const body = req.body;
@@ -77,28 +78,48 @@ async function getRegisteredPatients(req, res) {
 }
 
 async function GetPatientById(req, res) {
-  const patient = await Patient.findById(req.params.id);
+  try {
+    const patientId = req.params.id;
 
-  const payment = await Payment.find({ patientId: req.params.id });
-  console.log(payment);
+    // Validate if the ID is a valid MongoDB ObjectID
+    if (!mongoose.Types.ObjectId.isValid(patientId)) {
+      return res.status(400).json({ error: "Invalid patient ID format" });
+    }
 
-  const paymentData = payment.map((payment) => {
-    return {
+    // Fetch patient data
+    const patient = await Patient.findById(patientId);
+    if (!patient) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+
+    // Fetch payment data
+    const payments = await Payment.find({ patientId: patientId });
+    if (!payments || payments.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "No payments found for the patient" });
+    }
+
+    // Transform payment data
+    const paymentData = payments.map((payment) => ({
       _id: payment._id,
       paymentType: payment.paymentType,
       amount: payment.amount,
       paymentDate: payment.paymentDate,
+    }));
+
+    // Combine patient and payment data
+    const data = {
+      payments: paymentData,
+      ...patient._doc, // Spread the patient document
     };
-  });
 
-  if (!patient) return res.status(404).json({ error: "user not found" });
-
-  const data = {
-    payments: paymentData,
-    ...patient._doc,
-  };
-  console.log(data);
-  return res.json(data);
+    console.log(data);
+    return res.json(data);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 }
 
 async function UpdatePatientById(req, res) {
