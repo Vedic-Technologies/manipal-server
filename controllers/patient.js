@@ -1,9 +1,11 @@
 const Patient = require("../models/registerPatient");
 const Payment = require("../models/patientPaymentSchema");
+const User = require("../models/user");
 const cloudinary = require("../cloudinary");
 const mongoose = require("mongoose");
 
 async function RegisterPatient(req, res) {
+  const user = req.user;
   const body = req.body;
   if (!body || !body.patientName || !body.gender || !body.age) {
     return res.status(400).json({ msg: "all fields are req..." });
@@ -16,6 +18,7 @@ async function RegisterPatient(req, res) {
       imageUrl = result.secure_url;
     }
     const newPatient = new Patient({
+      adminID: user._id,
       patientName: body.patientName,
       gender: body.gender,
       age: body.age,
@@ -56,13 +59,13 @@ async function RegisterPatient(req, res) {
     newPatient
       .save()
       .then((result) => {
-        console.log(result);
+        // console.log(result);
         res.status(200).json({
           newPatient: result,
         });
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         res.status(500).json({
           error: err,
         });
@@ -72,8 +75,33 @@ async function RegisterPatient(req, res) {
   }
 }
 
+// async function updatePatients(req, res) {
+//   try {
+//     const user = await User.findById("66001456d97f0e8e6039f26c");
+//     console.log(user);
+//     if (!user) {
+//       console.error("user not found");
+//     }
+
+//     const result = await Patient.updateMany(
+//       {},
+//       { adminID: "66001456d97f0e8e6039f26c" }
+//     );
+//     console.log(`${result.nModified} patients updated with doctorId`);
+
+//     const allPatients = await Patient.find({});
+//     return res.json(allPatients);
+//     process.exit(1);
+//   } catch (err) {
+//     console.error(err);
+//   }
+// }
+
 async function getRegisteredPatients(req, res) {
-  const allPatients = await Patient.find({});
+  const user = req.user;
+  const allPatients = await Patient.find({
+    adminID: user._id,
+  });
   return res.json(allPatients);
 }
 
@@ -154,6 +182,7 @@ async function deletePatientById(req, res) {
 module.exports = {
   RegisterPatient,
   getRegisteredPatients,
+  // updatePatients,
   GetPatientById,
   UpdatePatientById,
   deletePatientById,

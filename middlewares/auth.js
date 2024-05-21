@@ -1,16 +1,44 @@
 const { getUser } = require("../service/auth");
 
-async function restrictToLoggedinUserOnly(req, res, next) {
-  const userUid = req.cookies?.uid;
+function checkForAuthentication(req, res, next) {
+  req.user = null;
 
-  if (!userUid) return res.status(401).json({ message: "Unauthorized" });
+  const tokenCookie = req.cookies?.token;
+  if (!tokenCookie) return res.json({ message: "please login" });
 
-  const user = getUser(userUid);
-  if (!user) return res.status(401).json({ message: "Unauthorized" });
+  const user = getUser(tokenCookie);
+  console.log(user);
+  if (!user) return res.status(401).json({ message: "please login" });
 
   req.user = user;
-  next();
+  return next();
 }
+
+// function restrictTo(roles = []) {
+//   return function (req, res, next) {
+//     if (!req.user) return res.json({ message: "restrict access" });
+
+//     if (!roles.includes(req.user.role))
+//       return res.json({ message: "restrict access" });
+
+//     return next();
+//   };
+// }
+
+// async function restrictToLoggedinUserOnly(req, res, next) {
+//   const userUid = req.headers["authorization"];
+
+//   // console.log(req.headers);
+//   if (!userUid)
+//     return res.status(401).json({ message: "no token please login" });
+
+//   const Token = userUid.split("Bearer ")[1];
+//   const user = getUser(Token);
+//   if (!user) return res.status(401).json({ message: "Unauthorized" });
+
+//   req.user = user;
+//   next();
+// }
 
 async function checkAuth(req, res, next) {
   const userUid = req.cookies?.uid;
@@ -21,4 +49,7 @@ async function checkAuth(req, res, next) {
   next();
 }
 
-module.exports = { restrictToLoggedinUserOnly, checkAuth };
+module.exports = {
+  checkForAuthentication,
+  checkAuth,
+};
