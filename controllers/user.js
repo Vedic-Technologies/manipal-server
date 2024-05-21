@@ -81,10 +81,9 @@ async function ValidateUserLogin(req, res) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
 
-  const sessionID = uuidv4();
-  setUser(sessionID, user);
-  res.cookie("uid", sessionID);
-  // return res.redirect("/home");
+  const token = setUser(user);
+  res.cookie("uid", token);
+  
   return res.json({ message: "Login successful", user: user });
 }
 

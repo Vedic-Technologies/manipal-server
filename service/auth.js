@@ -1,11 +1,28 @@
-const sessionIDToUserMap = new Map();
+const sessionIdToUserMap = new Map();
 
-function setUser(id, user) {
-  sessionIDToUserMap.set(id, user);
+const jwt = require("jsonwebtoken");
+const secret = "manipal$server$";
+
+function setUser(user) {
+  return jwt.sign(
+    {
+      _id: user._id,
+      email: user.email,
+    },
+    secret
+  );
 }
 
-function getUser(id) {
-  return sessionIDToUserMap.get(id);
+function getUser(token) {
+  try {
+    if (!token) return null;
+    return jwt.verify(token, secret);
+  } catch (error) {
+    return null;
+  }
 }
 
-module.exports = { setUser, getUser };
+module.exports = {
+  setUser,
+  getUser,
+};
