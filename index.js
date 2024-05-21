@@ -5,7 +5,7 @@ const swaggerJSDocs = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 
-const { restrictToLoggedin } = require("./middlewares/auth.js");
+const { restrictToLoggedinUserOnly } = require("./middlewares/auth.js");
 const userRouter = require("./routes/user");
 const patientRouter = require("./routes/patient.js");
 const doctorRouter = require("./routes/doctor.js");
@@ -30,7 +30,7 @@ connectMongoDb(URI);
 app.use(bodyParser.json()); // Parse application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(fileUpload({ useTempFiles: true }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.json());
 // app.use(logReqRes("log.txt"))
@@ -39,7 +39,9 @@ const swaggerDocs = YAML.load("./api.yaml");
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 //ROUTES
+
 app.use("/api/users", userRouter);
+// app.use("/api/staffs", userRouter);
 app.use("/api/patient", patientRouter);
 app.use("/api/doctors", doctorRouter);
 app.use("/api/payment", paymentRouter);
