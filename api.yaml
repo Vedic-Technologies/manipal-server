@@ -398,69 +398,69 @@ paths:
             $ref: "#/definitions/Doctor"
 
   /api/doctors/{id}:
-  #   get:
-  #     tags:
-  #       - doctor
-  #     summary: Get a doctor by ID
-  #     parameters:
-  #       - name: id
-  #         in: path
-  #         description: ID of the doctor to retrieve
-  #         required: true
-  #         type: string
-  #     responses:
-  #       200:
-  #         description: Successful response
-  #         schema:
-  #           $ref: "#/definitions/Doctor"
-  #       404:
-  #         description: Doctor not found
-  #         schema:
-  #           type: object
-  #           properties:
-  #             error:
-  #               type: string
+    get:
+      tags:
+        - doctor
+      summary: Get a doctor by ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of the doctor to retrieve
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/Doctor"
+        404:
+          description: Doctor not found
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
 
-  #   patch:
-  #     tags:
-  #       - doctor
-  #     summary: Update a doctor by ID
-  #     parameters:
-  #       - name: id
-  #         in: path
-  #         description: ID of the doctor to update
-  #         required: true
-  #         type: string
-  #       - in: body
-  #         name: doctor
-  #         description: Doctor data to update
-  #         required: true
-  #         schema:
-  #           $ref: "#/definitions/Doctor"
-  #     responses:
-  #       200:
-  #         description: Update successful
-  #         schema:
-  #           $ref: "#/definitions/Doctor"
+    patch:
+      tags:
+        - doctor
+      summary: Update a doctor by ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of the doctor to update
+          required: true
+          type: string
+        - in: body
+          name: doctor
+          description: Doctor data to update
+          required: true
+          schema:
+            $ref: "#/definitions/Doctor"
+      responses:
+        200:
+          description: Update successful
+          schema:
+            $ref: "#/definitions/Doctor"
 
-  #   delete:
-  #     tags:
-  #       - doctor
-  #     summary: Delete a doctor by ID
-  #     parameters:
-  #       - name: id
-  #         in: path
-  #         description: ID of the doctor to delete
-  #         required: true
-  #         type: string
-  #     responses:
-  #       200:
-  #         description: Deletion successful
-  #         schema:
-  #           type: object
-  #           properties:
-  #             status:
-  #               type: string
+    delete:
+      tags:
+        - doctor
+      summary: Delete a doctor by ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of the doctor to delete
+          required: true
+          type: string
+      responses:
+        200:
+          description: Deletion successful
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
 
 definitions:
   User:
