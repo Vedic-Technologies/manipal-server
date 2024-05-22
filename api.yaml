@@ -366,38 +366,38 @@ paths:
               status:
                 type: string
 
-  # /api/doctors/all_doctors/:
-  #   get:
-  #     tags:
-  #       - doctor
-  #     summary: Get all doctors
-  #     responses:
-  #       200:
-  #         description: Successful response
-  #         schema:
-  #           type: array
-  #           items:
-  #             $ref: "#/definitions/Doctor"
+  /api/doctors/all_doctors/:
+    get:
+      tags:
+        - doctor
+      summary: Get all doctors
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Doctor"
 
-  # /api/doctors/add_doctor/:
-  #   post:
-  #     tags:
-  #       - doctor
-  #     summary: Create a new doctor
-  #     parameters:
-  #       - in: body
-  #         name: doctor
-  #         description: Doctor data to create
-  #         required: true
-  #         schema:
-  #           $ref: "#/definitions/Doctor"
-  #     responses:
-  #       201:
-  #         description: Doctor created successfully
-  #         schema:
-  #           $ref: "#/definitions/Doctor"
+  /api/doctors/add_doctor/:
+    post:
+      tags:
+        - doctor
+      summary: Create a new doctor
+      parameters:
+        - in: body
+          name: doctor
+          description: Doctor data to create
+          required: true
+          schema:
+            $ref: "#/definitions/Doctor"
+      responses:
+        201:
+          description: Doctor created successfully
+          schema:
+            $ref: "#/definitions/Doctor"
 
-  # /api/doctors/{id}:
+  /api/doctors/{id}:
   #   get:
   #     tags:
   #       - doctor
