@@ -58,9 +58,9 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 //ROUTES
 
 app.use("/api/users", userRouter);
+app.use("/api/patient", patientRouter);
 app.use("/patient", checkForAuthentication, patientRouter);
 // app.use("/api/staffs", checkForAuthentication, userRouter);
-app.use("/api/patient", patientRouter);
 app.use("/api/doctors", doctorRouter);
 app.use("/api/payment", paymentRouter);
 
