@@ -99,10 +99,16 @@ async function RegisterPatient(req, res) {
 
 async function getRegisteredPatients(req, res) {
   const user = req.user;
-  const allPatients = await Patient.find({
-    adminID: user._id,
-  });
-  return res.json(allPatients);
+
+  if (user) {
+    const allPatients = await Patient.find({
+      adminID: user._id,
+    });
+    return res.json(allPatients);
+  } else {
+    const allPatients = await Patient.find({});
+    return res.json(allPatients);
+  }
 }
 
 async function GetPatientById(req, res) {
