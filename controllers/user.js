@@ -45,7 +45,7 @@ async function CreateNewUser(req, res) {
     !body ||
     !body.firstName ||
     !body.email ||
-    !body.userType ||
+    // !body.userType ||
     !body.password
   ) {
     return res.status(400).json({ msg: "all fields are req..." });
@@ -81,9 +81,15 @@ async function ValidateUserLogin(req, res) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
 
+  // console.log(user);
+
   const token = setUser(user);
-  res.cookie("uid", token);
-  
+  res.cookie("token", token, {
+    // httpOnly: true,
+    // secure: false,
+    // sameSite: "None",
+  });
+
   return res.json({ message: "Login successful", user: user });
 }
 

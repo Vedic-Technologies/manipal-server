@@ -5,7 +5,7 @@ const swaggerJSDocs = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 
-const { restrictToLoggedinUserOnly } = require("./middlewares/auth.js");
+const { checkForAuthentication } = require("./middlewares/auth.js");
 const userRouter = require("./routes/user");
 const patientRouter = require("./routes/patient.js");
 const doctorRouter = require("./routes/doctor.js");
@@ -21,7 +21,24 @@ dotenv.config();
 
 const PORT = process.env.PORT;
 const URI = process.env.URI;
-app.use(cors());
+
+const allowedOrigins = [
+  "http://localhost:3000", // Local development
+  "https://manipal-client.vercel.app/", // Production URL
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 // Connection
 connectMongoDb(URI);
@@ -42,6 +59,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use("/api/users", userRouter);
 // app.use("/api/staffs", userRouter);
+app.use("/patient", checkForAuthentication, patientRouter);
 app.use("/api/patient", patientRouter);
 app.use("/api/doctors", doctorRouter);
 app.use("/api/payment", paymentRouter);
