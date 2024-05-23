@@ -1,14 +1,18 @@
 const mongoose = require("mongoose");
 
 const soulderSchema = new mongoose.Schema({
-  // pain And Stiffness
   painAndStiffness: {
     side: {
       type: String,
-    //   enum: ["Right", "Left"],
+      // enum: ["Right", "Left"],
+    },
+    duration: {
+      years: Number,
+      months: Number,
+      weeks: Number,
+      days: Number,
     },
   },
-  // HOPI Form
   Hopi: {
     durationOfPain: {
       years: Number,
@@ -16,43 +20,39 @@ const soulderSchema = new mongoose.Schema({
       weeks: Number,
       days: Number,
     },
-
     natureOfPain: {
       type: String,
-    //   enum: ["Continuous", "On Activity"],
+      // enum: ["Continuous", "On Activity"],
     },
     symptoms: {
       type: String,
-    //   enum: ["Improving", "Worsening", "Remain Same"],
+      // enum: ["Improving", "Worsening", "Remain Same"],
     },
     onset: {
       type: String,
-    //   enum: ["Gradual", "Sudden"],
+      // enum: ["Gradual", "Sudden"],
     },
-
     injury: {
       type: Boolean,
     },
     relievingFactor: {
       type: String,
-    //   enum: ["Rest", "Medication"],
-      // Only store if injury is true
+      // enum: ["Rest", "Medication"],
       required: function () {
-        return this.injury;
+        return this.Hopi && this.Hopi.injury;
       },
     },
     injuryType: {
       type: String,
-    //   enum: [
-    //     "Fall",
-    //     "RTA",
-    //     "Throwing",
-    //     "Lifting",
-    //     "Any Movement of Shoulder Joint",
-    //   ],
-      // Only store if injury is true
+      // enum: [
+      //   "Fall",
+      //   "RTA",
+      //   "Throwing",
+      //   "Lifting",
+      //   "Any Movement of Shoulder Joint",
+      // ],
       required: function () {
-        return this.injury;
+        return this.Hopi && this.Hopi.injury;
       },
     },
     aggravatingFactor: {
@@ -60,14 +60,12 @@ const soulderSchema = new mongoose.Schema({
     },
     intensityOfPainAtNight: {
       type: String,
-    //   enum: ["Increased", "Decreased"],
+      // enum: ["Increased", "Decreased"],
     },
     sleepDisturbance: {
       type: Boolean,
     },
   },
-
-  // Past History Form
   pastHistory: {
     HTN: {
       present: {
@@ -75,9 +73,12 @@ const soulderSchema = new mongoose.Schema({
       },
       medication: {
         type: String,
-        // Only store if HTN is present
         required: function () {
-          return this.pastHistory.HTN.present;
+          return (
+            this.pastHistory &&
+            this.pastHistory.HTN &&
+            this.pastHistory.HTN.present
+          );
         },
       },
     },
@@ -88,9 +89,12 @@ const soulderSchema = new mongoose.Schema({
       medication: {
         type: String,
         // enum: ["On Regular Medications", "On Irregular Medications"],
-        // Only store if DM2 is present
         required: function () {
-          return this.pastHistory.DM2.present;
+          return (
+            this.pastHistory &&
+            this.pastHistory.DM2 &&
+            this.pastHistory.DM2.present
+          );
         },
       },
     },
@@ -101,12 +105,10 @@ const soulderSchema = new mongoose.Schema({
     },
     rxHistory: String,
   },
-
-  // On Examination Form
   onExamination: {
     shoulderSide: {
       type: String,
-    //   enum: ["Right", "Left"],
+      // enum: ["Right", "Left"],
     },
     neurologicalDeficit: {
       present: {
@@ -115,9 +117,12 @@ const soulderSchema = new mongoose.Schema({
       type: {
         type: String,
         // enum: ["Motor", "Sensory"],
-        // Only store if neurologicalDeficit is present
         required: function () {
-          return this.onExamination.neurologicalDeficit.present;
+          return (
+            this.onExamination &&
+            this.onExamination.neurologicalDeficit &&
+            this.onExamination.neurologicalDeficit.present
+          );
         },
       },
     },
@@ -137,14 +142,14 @@ const soulderSchema = new mongoose.Schema({
       {
         name: {
           type: String,
-        //   enum: [
-        //     "Supraspinatus",
-        //     "Infraspinatus",
-        //     "Subscapularis",
-        //     "Teres Minor",
-        //     "Deltoid",
-        //     "Pectoral",
-        //   ],
+          // enum: [
+          //   "Supraspinatus",
+          //   "Infraspinatus",
+          //   "Subscapularis",
+          //   "Teres Minor",
+          //   "Deltoid",
+          //   "Pectoral",
+          // ],
         },
         tenderness: Boolean,
       },
@@ -167,32 +172,30 @@ const soulderSchema = new mongoose.Schema({
       type: String,
     },
   },
-  // Physiotherapy Management Form
   physiotherapyManagement: {
     thumbDropTest: {
       type: String,
-      //   enum: ["Positive", "Negative"],
+      // enum: ["Positive", "Negative"],
     },
-
     painfulArcTest: {
       type: String,
-      //   enum: ["Positive", "Negative"],
+      // enum: ["Positive", "Negative"],
     },
     functionalAssessment: {
       type: String,
-      //   enum: ["Dependent", "Independent"],
+      // enum: ["Dependent", "Independent"],
     },
     difficultyIn: [
       {
         activity: {
           type: String,
-        //   enum: [
-        //     "Clothing",
-        //     "Combing",
-        //     "Lifting Objects",
-        //     "Overhead activities",
-        //     "Grip & Pinch",
-        //   ],
+          // enum: [
+          //   "Clothing",
+          //   "Combing",
+          //   "Lifting Objects",
+          //   "Overhead activities",
+          //   "Grip & Pinch",
+          // ],
         },
       },
     ],
@@ -200,21 +203,20 @@ const soulderSchema = new mongoose.Schema({
       {
         modality: {
           type: String,
-        //   enum: [
-        //     "Moist Heat",
-        //     "SWD",
-        //     "Shock Wave",
-        //     "Combination Therapy",
-        //     "LASER",
-        //     "TENS",
-        //     "IFT",
-        //     "US",
-        //   ],
+          // enum: [
+          //   "Moist Heat",
+          //   "SWD",
+          //   "Shock Wave",
+          //   "Combination Therapy",
+          //   "LASER",
+          //   "TENS",
+          //   "IFT",
+          //   "US",
+          // ],
         },
       },
     ],
   },
-  // Exercises Plan
   exercisesPlan: {
     gradedMobilization: Boolean,
     strengtheningOfRotatorCuffMuscles: Boolean,
@@ -225,6 +227,6 @@ const soulderSchema = new mongoose.Schema({
   },
 });
 
-const soulder = mongoose.model("soulder", soulderSchema);
+const Soulder = mongoose.model("Soulder", soulderSchema);
 
-module.exports = soulder;
+module.exports = Soulder;

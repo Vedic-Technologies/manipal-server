@@ -14,11 +14,11 @@ tags:
   # - name: Admin
   #   description: Endpoints related to admin operations
 
-host: manipal-server.onrender.com
-# host: localhost:8000
+# host: manipal-server.onrender.com
+host: localhost:8000
 schemes:
-  - https
-  # - http
+  # - https
+  - http
 
 consumes:
   - application/json
@@ -462,6 +462,92 @@ paths:
               status:
                 type: string
 
+  /api/patient/shoulder:
+    get:
+      tags:
+        - shoulder
+      summary: Get all soulders
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Soulder"
+
+  /api/patient/shoulder/register_problem:
+    post:
+      tags:
+        - shoulder
+      summary: Create a new soulder
+      parameters:
+        - in: body
+          name: body
+          description: Soulder object that needs to be added
+          required: true
+          schema:
+            $ref: "#/definitions/Soulder"
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: "#/definitions/Soulder"
+  /api/patient/shoulder/{id}:
+    get:
+      tags:
+        - shoulder
+      summary: Get a soulder by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+          description: The soulder ID
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: "#/definitions/Soulder"
+        "404":
+          description: Soulder not found
+    patch:
+      tags:
+        - shoulder
+      summary: Update a soulder by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+          description: The soulder ID
+        - in: body
+          name: body
+          description: Soulder object that needs to be updated
+          required: true
+          schema:
+            $ref: "#/definitions/Soulder"
+      responses:
+        "200":
+          description: Updated successfully
+          schema:
+            $ref: "#/definitions/Soulder"
+        "404":
+          description: Soulder not found
+    delete:
+      tags:
+        - shoulder
+      summary: Delete a soulder by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+          description: The soulder ID
+      responses:
+        "204":
+          description: Deleted successfully
+        "404":
+          description: Soulder not found
 definitions:
   User:
     required:
@@ -664,3 +750,207 @@ definitions:
       - name
       - phone
       - address
+
+  Soulder:
+    type: object
+    properties:
+      painAndStiffness:
+        type: object
+        properties:
+          side:
+            type: string
+            enum: ["Right", "Left"]
+          duration:
+            type: object
+            properties:
+              years:
+                type: integer
+              months:
+                type: integer
+              weeks:
+                type: integer
+              days:
+                type: integer
+      Hopi:
+        type: object
+        properties:
+          durationOfPain:
+            type: object
+            properties:
+              years:
+                type: integer
+              months:
+                type: integer
+              weeks:
+                type: integer
+              days:
+                type: integer
+          natureOfPain:
+            type: string
+            enum: ["Continuous", "On Activity"]
+          symptoms:
+            type: string
+            enum: ["Improving", "Worsening", "Remain Same"]
+          onset:
+            type: string
+            enum: ["Gradual", "Sudden"]
+          injury:
+            type: boolean
+          relievingFactor:
+            type: string
+            enum: ["Rest", "Medication"]
+          injuryType:
+            type: string
+            enum:
+              [
+                "Fall",
+                "RTA",
+                "Throwing",
+                "Lifting",
+                "Any Movement of Shoulder Joint",
+              ]
+          aggravatingFactor:
+            type: string
+          intensityOfPainAtNight:
+            type: string
+            enum: ["Increased", "Decreased"]
+          sleepDisturbance:
+            type: boolean
+      pastHistory:
+        type: object
+        properties:
+          HTN:
+            type: object
+            properties:
+              present:
+                type: boolean
+              medication:
+                type: string
+          DM2:
+            type: object
+            properties:
+              present:
+                type: boolean
+              medication:
+                type: string
+                enum: ["On Regular Medications", "On Irregular Medications"]
+          hypothyroidism:
+            type: object
+            properties:
+              present:
+                type: boolean
+          rxHistory:
+            type: string
+      onExamination:
+        type: object
+        properties:
+          shoulderSide:
+            type: string
+            enum: ["Right", "Left"]
+          neurologicalDeficit:
+            type: object
+            properties:
+              present:
+                type: boolean
+              type:
+                type: string
+                enum: ["Motor", "Sensory"]
+          swelling:
+            type: boolean
+          muscleWasting:
+            type: boolean
+          capsularPatternAltered:
+            type: boolean
+          musclesTightness:
+            type: boolean
+          muscles:
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  type: string
+                  enum:
+                    [
+                      "Supraspinatus",
+                      "Infraspinatus",
+                      "Subscapularis",
+                      "Teres Minor",
+                      "Deltoid",
+                      "Pectoral",
+                    ]
+                tenderness:
+                  type: boolean
+          ROM:
+            type: object
+            properties:
+              side:
+                type: string
+          tone:
+            type: string
+          musclePower:
+            type: string
+          coordination:
+            type: string
+          gripAndPinch:
+            type: string
+      physiotherapyManagement:
+        type: object
+        properties:
+          thumbDropTest:
+            type: string
+            enum: ["Positive", "Negative"]
+          painfulArcTest:
+            type: string
+            enum: ["Positive", "Negative"]
+          functionalAssessment:
+            type: string
+            enum: ["Dependent", "Independent"]
+          difficultyIn:
+            type: array
+            items:
+              type: object
+              properties:
+                activity:
+                  type: string
+                  enum:
+                    [
+                      "Clothing",
+                      "Combing",
+                      "Lifting Objects",
+                      "Overhead activities",
+                      "Grip & Pinch",
+                    ]
+          modalities:
+            type: array
+            items:
+              type: object
+              properties:
+                modality:
+                  type: string
+                  enum:
+                    [
+                      "Moist Heat",
+                      "SWD",
+                      "Shock Wave",
+                      "Combination Therapy",
+                      "LASER",
+                      "TENS",
+                      "IFT",
+                      "US",
+                    ]
+      exercisesPlan:
+        type: object
+        properties:
+          gradedMobilization:
+            type: boolean
+          strengtheningOfRotatorCuffMuscles:
+            type: boolean
+          capsularStretchingExercises:
+            type: boolean
+          avoidJerkyMovements:
+            type: boolean
+          homeProgramGiven:
+            type: boolean
+          prognosisWellExplainedInPatientsWords:
+            type: boolean

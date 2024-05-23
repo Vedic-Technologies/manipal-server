@@ -8,8 +8,11 @@ const {
   // updatePatients,
   GetPatientById,
 } = require("../controllers/patient");
+const shoulderRouter = require("../routes/shoulder");
 
 const router = express.Router();
+
+router.use("/shoulder", shoulderRouter);
 
 router.route("/all_patients").get(getRegisteredPatients);
 // router.route("/all_patients/update").get(updatePatients);
