@@ -771,6 +771,8 @@ definitions:
                 type: integer
               days:
                 type: integer
+      patientId:
+        type: string
       Hopi:
         type: object
         properties:
