@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const soulderSchema = new mongoose.Schema({
+patientId : String,
   painAndStiffness: {
     side: {
       type: String,
