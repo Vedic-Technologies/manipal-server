@@ -4,6 +4,7 @@ const { setUser } = require("../service/auth");
 
 async function GetAllUsers(req, res) {
   const alldbUsers = await User.find({});
+console.log(alldbUsers);
   return res.json(alldbUsers);
 }
 
