@@ -3,9 +3,10 @@ const mongoose = require("mongoose");
 const patientSchema = new mongoose.Schema(
   {
     adminID: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+      type: String,
+      // type: mongoose.Schema.Types.ObjectId,
+      // ref: "User",
+      // required: true,
     },
     patientName: {
       type: String,
@@ -14,12 +15,12 @@ const patientSchema = new mongoose.Schema(
 
     gender: {
       type: String,
-      require: true,
+      // require: true,
     },
 
     age: {
       type: Number,
-      require: true,
+      // require: true,
     },
 
     dob: {

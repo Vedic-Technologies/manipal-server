@@ -9,7 +9,7 @@ const patientPaymentSchema = new mongoose.Schema(
     },
     paymentType: {
       type: String,
-      enum: ["daily", "15_days", "30_days"],
+      // enum: ["daily", "15_days", "30_days"],
       required: true,
     },
     amount: {
