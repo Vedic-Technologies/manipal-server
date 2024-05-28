@@ -5,8 +5,9 @@ const cloudinary = require("../cloudinary");
 const mongoose = require("mongoose");
 
 async function RegisterPatient(req, res) {
-  const user = req.user;
+  // const user = req.user;
   const body = req.body;
+  // console.log(body);
   if (!body || !body.patientName || !body.gender || !body.age) {
     return res.status(400).json({ msg: "all fields are req..." });
   }
@@ -17,61 +18,18 @@ async function RegisterPatient(req, res) {
       const result = await cloudinary.uploader.upload(body.image);
       imageUrl = result.secure_url;
     }
-    const newPatient = new Patient({
-      adminID: user._id,
-      patientName: body.patientName,
-      gender: body.gender,
-      age: body.age,
-      dob: body.dob,
+    const newPatient = await Patient.create({
+      // adminID: user._id,
+      ...body,
       image: imageUrl,
-      contact: body.contact,
-      email: body.email,
-      occupation: body.occupation,
-      HOPI: body.HOPI,
-      familyHistory: body.familyHistory,
-      environmentalHistory: body.environmentalHistory,
-      HR: body.HR,
-      BP: body.BP,
-      RR: body.RR,
-      examination: body.examination,
-      spine: body.spine,
-      specialTest: body.specialTest,
-      deformity: body.deformity,
-      respiratoryType: body.respiratoryType,
-      breathSound: body.breathSound,
-      examinationExtremity: body.examinationExtremity,
-      gaitEvaluation: body.gaitEvaluation,
-      functionalAssessment: body.functionalAssessment,
-      disability: body.disability,
-      treatmentGoal: body.treatmentGoal,
-      tendonJerks: body.tendonJerks,
-      checkUp_status: body.checkUp_status,
-      active: body.active,
-      IdProof: body.IdProof,
-      bloodGroup: body.bloodGroup,
-      weight: body.weight,
-      height: body.height,
-      relative: body.relative,
-      complaint: body.complaint,
-      referredTo: body.referredTo,
-      address: body.address,
     });
-    newPatient
-      .save()
-      .then((result) => {
-        // console.log(result);
-        res.status(200).json({
-          newPatient: result,
-        });
-      })
-      .catch((err) => {
-        // console.log(err);
-        res.status(500).json({
-          error: err,
-        });
-      });
+
+    // console.log(newPatient, "----------------------------");
+
+    return res.status(201).json({ newPatient: newPatient });
+
   } catch (error) {
-    res.json({ error: error });
+    res.status(500).json({ err: error });
   }
 }
 
@@ -128,11 +86,11 @@ async function GetPatientById(req, res) {
 
     // Fetch payment data
     const payments = await Payment.find({ patientId: patientId });
-    if (!payments) {
-      return res
-        .status(404)
-        .json({ error: "No payments found for the patient" });
-    }
+    // if (!payments) {
+    //   return res
+    //     .status(404)
+    //     .json({ error: "No payments found for the patient" });
+    // }
 
     // Transform payment data
     const paymentData = payments.map((payment) => ({
@@ -148,7 +106,7 @@ async function GetPatientById(req, res) {
       ...patient._doc, // Spread the patient document
     };
 
-    console.log(data);
+    // console.log(data);
     return res.json(data);
   } catch (error) {
     console.error(error);
