@@ -30,14 +30,16 @@ const allowedOrigins = [
 
 const corsOptions = {
   // origin: "http://localhost:3000",
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
+  origin: "https://manipal-client.vercel.app",
+  // origin: (origin, callback) => {
+  //   console.log(origin)
+  //   if (allowedOrigins.includes(origin) || !origin) {
+  //     callback(null, true);
+  //   } else {
+  //     callback(new Error("Not allowed by CORS"));
+  //   }
+  // },
+  credentials: true, // Allow credentials (cookies)
 };
 
 app.use(cors(corsOptions));
