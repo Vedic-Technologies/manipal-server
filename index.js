@@ -25,10 +25,11 @@ const URI = process.env.URI;
 
 const allowedOrigins = [
   "http://localhost:3000", // Local development
-  "https://manipal-client.vercel.app/", // Production URL
+  "https://manipal-client.vercel.app", // Production URL
 ];
 
 const corsOptions = {
+  // origin: "http://localhost:3000",
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -39,7 +40,7 @@ const corsOptions = {
   credentials: true,
 };
 
-app.use(cors());
+app.use(cors(corsOptions));
 
 // Connection
 connectMongoDb(URI);
@@ -60,7 +61,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use("/api/users", userRouter);
 app.use("/api/staffs", staffRouter);
-app.use("/api/patient", patientRouter);
+app.use("/api/patient", checkForAuthentication, patientRouter);
 app.use("/patient", checkForAuthentication, patientRouter);
 app.use("/api/doctors", doctorRouter);
 app.use("/api/payment", paymentRouter);

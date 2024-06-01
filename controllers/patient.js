@@ -5,7 +5,7 @@ const cloudinary = require("../cloudinary");
 const mongoose = require("mongoose");
 
 async function RegisterPatient(req, res) {
-  // const user = req.user;
+  const user = req.user;
   const body = req.body;
   // console.log(body);
   if (!body || !body.patientName || !body.gender || !body.age) {
@@ -19,7 +19,7 @@ async function RegisterPatient(req, res) {
       imageUrl = result.secure_url;
     }
     const newPatient = await Patient.create({
-      // adminID: user._id,
+      adminID: user._id,
       ...body,
       image: imageUrl,
     });
@@ -27,7 +27,6 @@ async function RegisterPatient(req, res) {
     // console.log(newPatient, "----------------------------");
 
     return res.status(201).json({ newPatient: newPatient });
-
   } catch (error) {
     res.status(500).json({ err: error });
   }
@@ -41,13 +40,14 @@ async function RegisterPatient(req, res) {
 //       console.error("user not found");
 //     }
 
-//     const result = await Patient.updateMany(
-//       {},
-//       { adminID: "66001456d97f0e8e6039f26c" }
-//     );
+//     const result = await Patient.updateMany({
+//       adminID: "66001456d97f0e8e6039f26c",
+//     });
 //     console.log(`${result.nModified} patients updated with doctorId`);
 
-//     const allPatients = await Patient.find({});
+//     const allPatients = await Patient.find({
+//       adminID: "66001456d97f0e8e6039f26c",
+//     });
 //     return res.json(allPatients);
 //     process.exit(1);
 //   } catch (err) {
@@ -57,6 +57,7 @@ async function RegisterPatient(req, res) {
 
 async function getRegisteredPatients(req, res) {
   const user = req.user;
+  console.log(user);
 
   if (user) {
     const allPatients = await Patient.find({
@@ -65,6 +66,7 @@ async function getRegisteredPatients(req, res) {
     return res.json(allPatients);
   } else {
     const allPatients = await Patient.find({});
+    console.log(allPatients);
     return res.json(allPatients);
   }
 }
@@ -72,6 +74,7 @@ async function getRegisteredPatients(req, res) {
 async function GetPatientById(req, res) {
   try {
     const patientId = req.params.id;
+    const adminID = req.user._id;
 
     // Validate if the ID is a valid MongoDB ObjectID
     if (!mongoose.Types.ObjectId.isValid(patientId)) {
@@ -79,7 +82,18 @@ async function GetPatientById(req, res) {
     }
 
     // Fetch patient data
-    const patient = await Patient.findById(patientId);
+    let patient;
+    if (adminID) {
+      patient = await Patient.findOne({
+        _id: patientId,
+        adminID: adminID,
+      });
+    } else {
+      patient = await Patient.findOne({
+        _id: patientId,
+      });
+    }
+
     if (!patient) {
       return res.status(404).json({ error: "Patient not found" });
     }
@@ -103,7 +117,7 @@ async function GetPatientById(req, res) {
     // Combine patient and payment data
     const data = {
       payments: paymentData,
-      ...patient._doc, // Spread the patient document
+      ...patient, // Spread the patient document
     };
 
     // console.log(data);
