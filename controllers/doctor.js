@@ -11,14 +11,45 @@ async function AddDoctor(req, res) {
     email: body.email,
     phone: body.phone,
     address: body.address,
-    availability: body.availability
+    availability: body.availability,
   });
   return res.status(201).json({ msg: "doctor added", doctorId: doctor._id });
 }
 
 async function getDoctorDetails(req, res) {
-  const allDoctors = await Doctor.find({});
-  return res.json(allDoctors);
+  // const allDoctors = await Doctor.find({});
+  // return res.json(allDoctors);
+
+  try {
+    const allDoctors = await Doctor.find({}).populate({
+      path: "patientId",
+      model: "patient",
+      select: "patientName _id contact image active", // Choose the fields you want to include
+    });
+
+    console.log(allPayments);
+
+    // Optionally, enhance data format here if needed
+    const paymentsWithPatientInfo = allPayments.map((payment) => ({
+      _id: payment._id,
+      patientId: payment.patientId._id,
+      paymentType: payment.paymentType,
+      amount: payment.amount,
+      paymentDate: payment.paymentDate,
+      patient: {
+        // _id: payment.patientId._id,
+        name: payment.patientId?.patientName,
+        active: payment.patientId?.active,
+        contact: payment.patientId?.contact,
+        image: payment.patientId?.image,
+      },
+    }));
+
+    return res.json(paymentsWithPatientInfo);
+  } catch (error) {
+    console.error("Failed to retrieve payments:", error);
+    return res.status(500).json({ msg: "Internal server error" });
+  }
 }
 
 async function GetDoctorById(req, res) {

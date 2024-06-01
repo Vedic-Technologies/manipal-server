@@ -4,11 +4,11 @@ function checkForAuthentication(req, res, next) {
   req.user = null;
 
   const tokenCookie = req.cookies?.token;
-  if (!tokenCookie) return res.json({ message: "please login" });
+  // if (!tokenCookie) return res.json({ message: "please login" });
 
   const user = getUser(tokenCookie);
   console.log(user);
-  if (!user) return res.status(401).json({ message: "please login" });
+  // if (!user) return res.status(401).json({ message: "please login" });
 
   req.user = user;
   return next();
