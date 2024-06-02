@@ -10,6 +10,10 @@ async function handleNewPayment(req, res) {
   }
 
   try {
+    const patientExists = await Patient.findById(body.patientId);
+    if (!patientExists) {
+      return res.status(404).json({ msg: "Patient not found" });
+    }
     // Attempt to create the payment
     const result = await Payment.create({
       patientId: body.patientId,
@@ -31,6 +35,8 @@ async function handleNewPayment(req, res) {
 }
 
 async function GetAllPayment(req, res) {
+  // const allPayments = await Payment.find({});
+  // return res.json(allPayments);
   try {
     const allPayments = await Payment.find({}).populate({
       path: "patientId",
@@ -42,19 +48,20 @@ async function GetAllPayment(req, res) {
 
     // Optionally, enhance data format here if needed
     const paymentsWithPatientInfo = allPayments.map((payment) => ({
-      _id: payment._id,
-      patientId: payment.patientId._id,
+      _id: payment?._id,
+      patientId: payment.patientId?._id,
       paymentType: payment.paymentType,
       amount: payment.amount,
       paymentDate: payment.paymentDate,
       patient: {
-        // _id: payment.patientId._id,
+        _id: payment.patientId?._id,
         name: payment.patientId?.patientName,
         active: payment.patientId?.active,
         contact: payment.patientId?.contact,
         image: payment.patientId?.image,
       },
     }));
+    // console.log(paymentsWithPatientInfo);
 
     return res.json(paymentsWithPatientInfo);
   } catch (error) {
@@ -110,7 +117,7 @@ async function UpdatePaymentById(req, res) {
 async function deletePaymentById(req, res) {
   try {
     await Payment.findByIdAndDelete(req.params.id);
-    res.json({ status: "deleted successfully" });
+    res.json({ status: "deleted successfully now" });
   } catch (error) {
     return res.status(500).json({ error: "payment not found" });
   }
