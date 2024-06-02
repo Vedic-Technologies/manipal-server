@@ -4,7 +4,7 @@ const { setUser } = require("../service/auth");
 
 async function GetAllUsers(req, res) {
   const alldbUsers = await User.find({});
-console.log(alldbUsers);
+  console.log(alldbUsers);
   return res.json(alldbUsers);
 }
 
@@ -85,13 +85,13 @@ async function ValidateUserLogin(req, res) {
   // console.log(user);
 
   const token = setUser(user);
-  res.cookie("token", token, {
-    // httpOnly: true,
-    // secure: false,
-    // sameSite: "None",
-  });
+  // res.cookie("token", token, {
+  //   // httpOnly: true,
+  //   // secure: false,
+  //   // sameSite: "None",
+  // });
 
-  return res.json({ message: "Login successful", user: user });
+  return res.json({ message: "Login successful", user: user, token });
 }
 
 module.exports = {
