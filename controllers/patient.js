@@ -74,7 +74,7 @@ async function getRegisteredPatients(req, res) {
 async function GetPatientById(req, res) {
   try {
     const patientId = req.params.id;
-    const adminID = req.user._id;
+    const adminID = req.user?._id;
 
     // Validate if the ID is a valid MongoDB ObjectID
     if (!mongoose.Types.ObjectId.isValid(patientId)) {
@@ -117,7 +117,7 @@ async function GetPatientById(req, res) {
     // Combine patient and payment data
     const data = {
       payments: paymentData,
-      ...patient, // Spread the patient document
+      ...patient._doc, // Spread the patient document
     };
 
     // console.log(data);
