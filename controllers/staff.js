@@ -1,37 +1,80 @@
-const { v4: uuidv4 } = require("uuid");
+// const { v4: uuidv4 } = require("uuid");
 const Staff = require("../models/staff");
+const User = require("../models/user");
+const { findById } = require("../models/user");
 const { setStaff } = require("../service/auth");
 
 async function GetAllStaffs(req, res) {
-  // const user = req.user;
-  console.log("first")
-  const alldbStaffs = await Staff.find({  });
+  const adminID = req.user._id;
+  if (!adminID) {
+    return res.status(404).json({ msg: "invalid token or expired" });
+
+  }
+  console.log("staff");
+  const alldbStaffs = await Staff.find({ adminID });
+  console.log(alldbStaffs);
+  return res.json(alldbStaffs);
+}
+
+async function GetAllStaffsWithoutAdmin(req, res) {
+  const alldbStaffs = await Staff.find({});
+  console.log(alldbStaffs);
   return res.json(alldbStaffs);
 }
 
 async function GetStaffById(req, res) {
-  const Staff = await Staff.findById(req.params.id);
-  if (!Staff) return res.status(404).json({ error: "Staff not found" });
-  return res.json(Staff);
+  const staff = await Staff.findById(req.params.id);
+  if (!staff) return res.status(404).json({ error: "Staff not found" });
+  return res.json(staff);
+}
+
+async function CreateNewStaff(req, res) {
+  // console.log(req.user);
+  const adminID = req.user._id;
+  const adminExist = await User.findById(adminID);
+  if (!adminExist) {
+    return res.status(404).json({ msg: "invalid token or expired" });
+  }
+  
+  const body = req.body;
+  if (!body || !body.firstName || !body.email || !body.password) {
+    return res.status(400).json({ msg: "all fields are req..." });
+  }
+
+  const StaffExist = await Staff.findOne({ email: body.email });
+  if (StaffExist) {
+    return res.status(404).json({ msg: "email already in use" });
+  }
+  const result = await Staff.create({
+    adminID,
+    ...body,
+  });
+  console.log(result);
+
+  return res
+    .status(201)
+    .json({
+      msg: "success",
+      result: { ...result._doc, createdBy: adminExist.email },
+    });
 }
 
 async function UpdateStaffById(req, res) {
-  try {
-    const StaffUpdates = req.body;
-    const Staff = await Staff.findById(req.params.id);
-    if (!Staff) {
-      return res.status(404).json({ error: "Staff not found" });
-    }
-    Object.keys(StaffUpdates).forEach((key) => {
-      Staff[key] = StaffUpdates[key];
-    });
-
-    const updatedStaff = await Staff.save();
-    return res.json({ status: "update success", Staff: updatedStaff });
-  } catch (error) {
-    console.error("Error updating patient:", error);
-    return res.status(500).json({ error: "Internal server error" });
-  }
+  // try {
+  //   const StaffUpdates = req.body;
+  //   const staff = await Staff.findById(req.params.id);
+  //   if (!staff) {
+  //     return res.status(404).json({ error: "Staff not found" });
+  //   }
+  //   Object.keys(StaffUpdates).forEach((key) => {
+  //     staff[key] = StaffUpdates[key];
+  //   });
+  //   const updatedStaff = await staff.save();
+  //   return res.json({ status: "update success", Staff: updatedStaff });
+  // } catch (error) {
+  //   console.error("Error updating patient:", error);
+  //   return res.status(500).json({ error: "Internal server error" });
+  // }
 }
 
 async function deleteStaffById(req, res) {
@@ -39,55 +82,12 @@ async function deleteStaffById(req, res) {
   res.json({ status: "deleted successfully" });
 }
 
-async function CreateNewStaff(req, res) {
-  // console.log(req.body);
-  const body = req.body;
-  // console.log(body);
-  if (!body || !body.firstName || !body.email || !body.password) {
-    return res.status(400).json({ msg: "all fields are req..." });
-  }
-  const result = await Staff.create({
-    firstName: body.firstName,
-    lastName: body.lastName,
-    email: body.email,
-    password: body.password,
-    contact: body.contact,
-    gender: body.gender,
-  });
-  return res.status(201).json({ msg: "success", id: result._id });
-}
-
-// async function ValidateStaffLogin(req, res) {
-//   const { email, password } = req.body;
-
-//   if (!email || !password) {
-//     return res.status(400).json({ error: "Email and password are required" });
-//   }
-
-//   const Staff = await Staff.findOne({ email });
-
-//   if (!Staff) {
-//     return res.status(404).json({ error: "Staff not found" });
-//   }
-
-//   // Add logic to compare hashed passwords here
-//   // For simplicity, let's assume plain text comparison for now
-//   if (Staff.password !== password) {
-//     return res.status(401).json({ error: "Invalid credentials" });
-//   }
-
-//   const sessionID = uuidv4();
-//   setStaff(sessionID, Staff);
-//   res.cookie("uid", sessionID);
-//   // return res.redirect("/home");
-//   return res.json({ message: "Login successful", Staff: Staff });
-// }
-
 module.exports = {
   GetAllStaffs,
   GetStaffById,
   UpdateStaffById,
   deleteStaffById,
   CreateNewStaff,
+  GetAllStaffsWithoutAdmin,
   // ValidateStaffLogin,
 };

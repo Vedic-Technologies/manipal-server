@@ -1,3 +1,4 @@
+console.clear();
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
@@ -7,6 +8,7 @@ const YAML = require("yamljs");
 
 const { checkForAuthentication } = require("./middlewares/auth.js");
 const userRouter = require("./routes/user");
+const SuperAdminRouter = require("./routes/superAdmin.js");
 const staffRouter = require("./routes/staff.js");
 const patientRouter = require("./routes/patient.js");
 const doctorRouter = require("./routes/doctor.js");
@@ -32,7 +34,7 @@ const corsOptions = {
   // origin: "http://localhost:3000",
   // origin: "https://manipal-client.vercel.app",
   origin: (origin, callback) => {
-    console.log(origin)
+    console.log(origin);
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
     } else {
@@ -62,11 +64,12 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 //ROUTES
 
 app.use("/api/users", userRouter);
-app.use("/api/staffs", staffRouter);
+app.use("/api/superAdmin", SuperAdminRouter);
+app.use("/api/staffs", checkForAuthentication, staffRouter);
 app.use("/api/patient", checkForAuthentication, patientRouter);
 app.use("/patient", checkForAuthentication, patientRouter);
-app.use("/api/doctors", doctorRouter);
-app.use("/api/payment", paymentRouter);
+app.use("/api/doctors", checkForAuthentication, doctorRouter);
+app.use("/api/payment", checkForAuthentication, paymentRouter);
 
 // app.use("/api/admin", adminRouter);
 

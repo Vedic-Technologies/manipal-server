@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require("uuid");
 const User = require("../models/user");
-const { setUser } = require("../service/auth");
+const Staff = require("../models/staff");
+const { generateToken, getUser } = require("../service/auth");
 
 async function GetAllUsers(req, res) {
   const alldbUsers = await User.find({});
@@ -34,22 +35,24 @@ async function UpdateUserById(req, res) {
 }
 
 async function deleteUserById(req, res) {
+  if (req.params.id === "66001456d97f0e8e6039f26c") {
+    return res
+      .status(403)
+      .send("Action not allowed for this admin entry");
+  }
   await User.findByIdAndDelete(req.params.id);
   res.json({ status: "deleted successfully" });
 }
 
 async function CreateNewUser(req, res) {
-  // console.log(req.body);
   const body = req.body;
-  // console.log(body);
-  if (
-    !body ||
-    !body.firstName ||
-    !body.email ||
-    // !body.userType ||
-    !body.password
-  ) {
+  if (!body || !body.firstName || !body.email || !body.password) {
     return res.status(400).json({ msg: "all fields are req..." });
+  }
+
+  const userExist = await User.findOne({ email: body.email });
+  if (userExist) {
+    return res.status(400).json({ message: "Email already in use." });
   }
   const result = await User.create({
     firstName: body.firstName,
@@ -58,40 +61,51 @@ async function CreateNewUser(req, res) {
     password: body.password,
     contact: body.contact,
     gender: body.gender,
-    userType: body.userType,
+    userType: "admin",
   });
-  return res.status(201).json({ msg: "success", id: result._id });
+  return res.status(201).json({ msg: "success", user: result });
 }
 
 async function ValidateUserLogin(req, res) {
-  const { email, password } = req.body;
+  const { email, password, userType } = req.body;
+  console.log(email, password, userType);
 
-  if (!email || !password) {
-    return res.status(400).json({ error: "Email and password are required" });
+  if (!email || !password || !userType) {
+    return res
+      .status(400)
+      .json({ error: "Email, password and userType are required" });
   }
 
-  const user = await User.findOne({ email });
+  //find user if usertype is staff
+  let user;
+  if (userType === "staff") {
+    user = await Staff.findOne({ email });
+  } else if (userType === "admin") {
+    user = await User.findOne({ email });
+  } else {
+    return res.status(404).json({ error: "invalid userType" });
+  }
+  console.log(user);
 
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
 
-  // Add logic to compare hashed passwords here
-  // For simplicity, let's assume plain text comparison for now
   if (user.password !== password) {
-    return res.status(401).json({ error: "Invalid credentials" });
+    return res.status(404).json({ error: "invalid password" });
+  }
+  if (!user.userType) {
+    return res
+      .status(404)
+      .json({ error: "invalid post user please add userType" });
   }
 
-  // console.log(user);
+  const token = generateToken(user);
+  if (!token) {
+    return res.json({ error: "error generating token" });
+  }
 
-  const token = setUser(user);
-  // res.cookie("token", token, {
-  //   // httpOnly: true,
-  //   // secure: false,
-  //   // sameSite: "None",
-  // });
-
-  return res.json({ message: "Login successful", user: user, token });
+  return res.json({ message: "Login successful", user: user, token: token });
 }
 
 module.exports = {

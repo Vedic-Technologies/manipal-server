@@ -1,8 +1,15 @@
 const Payment = require("../models/patientPaymentSchema");
 const Patient = require("../models/registerPatient");
+const User = require("../models/user");
 
 async function handleNewPayment(req, res) {
   const body = req.body;
+  const adminID = req.user._id;
+  const adminExists = await User.findById(adminID);
+  if (!adminExists) {
+    return res.status(404).json({ msg: "invalid token or expired" });
+  }
+
   if (!body || !body.patientId || !body.paymentType || !body.amount) {
     return res.status(400).json({
       msg: "All fields are required and amount should be greater than 0",
@@ -16,13 +23,11 @@ async function handleNewPayment(req, res) {
     }
     // Attempt to create the payment
     const result = await Payment.create({
-      patientId: body.patientId,
-      paymentType: body.paymentType,
-      amount: body.amount,
-      paymentDate: body.paymentDate,
+      ...body,
+      adminID,
     });
 
-    return res.status(201).json({ msg: "success", patient_id: result._id });
+    return res.status(201).json({ msg: "success", patient_id: result._id , createdBy: req.user.email });
   } catch (error) {
     // Handle the error
     if (error.name === "ValidationError") {
@@ -35,10 +40,10 @@ async function handleNewPayment(req, res) {
 }
 
 async function GetAllPayment(req, res) {
-  // const allPayments = await Payment.find({});
-  // return res.json(allPayments);
+  const adminID = req.user._id;
+
   try {
-    const allPayments = await Payment.find({}).populate({
+    const allPayments = await Payment.find({ adminID }).populate({
       path: "patientId",
       model: "patient",
       select: "patientName _id contact image active", // Choose the fields you want to include

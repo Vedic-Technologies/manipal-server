@@ -4,9 +4,9 @@ const patientSchema = new mongoose.Schema(
   {
     adminID: {
       type: String,
-      // type: mongoose.Schema.Types.ObjectId,
-      // ref: "User",
-      // required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     patientName: {
       type: String,

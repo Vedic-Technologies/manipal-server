@@ -5,21 +5,21 @@ const {
   UpdateStaffById,
   deleteStaffById,
   CreateNewStaff,
-  // ValidateStaffLogin,
+  GetAllStaffsWithoutAdmin,
 } = require("../controllers/staff");
+const { checkForAuthentication, blocked } = require("../middlewares/auth");
 
 const router = express.Router();
 
-router.route("/").get(GetAllStaffs);
+router.get("/", GetAllStaffs);
+router.get("/allStaffs", GetAllStaffsWithoutAdmin);
 
-router.route("/signup").post(CreateNewStaff);
-
-// router.route("/login").post(ValidateStaffLogin);
+router.post("/register", CreateNewStaff);
 
 router
   .route("/:id")
-  .get(GetStaffById)
-  .patch(UpdateStaffById)
-  .delete(deleteStaffById);
+  .get(blocked, GetStaffById)
+  .patch(blocked, UpdateStaffById)
+  .delete( deleteStaffById);
 
 module.exports = router;

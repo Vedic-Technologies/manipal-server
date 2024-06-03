@@ -548,6 +548,131 @@ paths:
           description: Deleted successfully
         "404":
           description: Soulder not found
+
+  /api/superAdmin:
+    get:
+      tags:
+        - superAdmin
+      summary: Get all SuperAdmins
+      security:
+        - tokenAuth: [] # Specify that token authentication is required
+      responses:
+        "200":
+          description: A list of SuperAdmins
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SuperAdmin"
+
+    post:
+      tags:
+        - superAdmin
+      summary: SuperAdmin login
+      security: [] # No security requirement for login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Logged in successfully
+          headers:
+            Authorization:
+              schema:
+                type: string
+                description: JWT token for authentication
+    post:
+      security: [] # No security requirement for creating a new SuperAdmin
+      tags:
+        - superAdmin
+      summary: Create a new SuperAdmin only access by logged in superAdmin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SuperAdmin"
+      responses:
+        "201":
+          description: SuperAdmin created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuperAdmin"
+  /api/superAdmin/{id}:
+    get:
+      tags:
+        - superAdmin
+      summary: Get a SuperAdmin by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the SuperAdmin to retrieve
+          schema:
+            type: string
+      responses:
+        "200":
+          description: SuperAdmin found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuperAdmin"
+        "404":
+          description: SuperAdmin not found
+    patch:
+      tags:
+        - superAdmin
+      summary: Update a SuperAdmin by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the SuperAdmin to update
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SuperAdmin"
+      responses:
+        "200":
+          description: SuperAdmin updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuperAdmin"
+        "404":
+          description: SuperAdmin not found
+    delete:
+      tags:
+        - superAdmin
+      summary: Delete a SuperAdmin by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the SuperAdmin to delete
+          schema:
+            type: string
+      responses:
+        "204":
+          description: SuperAdmin deleted successfully
+        "404":
+          description: SuperAdmin not found
+
 definitions:
   User:
     required:
@@ -956,3 +1081,34 @@ definitions:
             type: boolean
           prognosisWellExplainedInPatientsWords:
             type: boolean
+
+  SuperAdmin:
+    type: object
+    properties:
+      firstName:
+        type: string
+      lastName:
+        type: string
+      email:
+        type: string
+      gender:
+        type: string
+      contact:
+        type: string
+      password:
+        type: string
+      userType:
+        type: string
+    required:
+      - firstName
+      - email
+      - password
+
+security:
+  - tokenAuth: [] # Specify that token authentication is required
+securitySchemes:
+  tokenAuth:
+    type: apiKey
+    in: header
+    name: Authorization
+    description: JWT token for authentication
