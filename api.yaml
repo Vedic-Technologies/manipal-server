@@ -567,31 +567,6 @@ paths:
                   $ref: "#/components/schemas/SuperAdmin"
 
     post:
-      tags:
-        - superAdmin
-      summary: SuperAdmin login
-      security: [] # No security requirement for login
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                password:
-                  type: string
-      responses:
-        '200':
-          description: Logged in successfully
-          headers:
-            Authorization:
-              schema:
-                type: string
-                description: JWT token for authentication
-    post:
       security: [] # No security requirement for creating a new SuperAdmin
       tags:
         - superAdmin
@@ -609,6 +584,34 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuperAdmin"
+
+  /api/superAdmin/login:
+    post:
+      tags:
+        - superAdmin
+      summary: SuperAdmin login
+      security: [] # No security requirement for login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Logged in successfully
+          headers:
+            Authorization:
+              schema:
+                type: string
+                description: JWT token for authentication
+
   /api/superAdmin/{id}:
     get:
       tags:
