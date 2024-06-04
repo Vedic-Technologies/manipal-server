@@ -3,7 +3,7 @@ const { getUser } = require("../service/auth");
 function checkForAuthentication(req, res, next) {
   req.user = null;
   const authHeader = req.headers["authorization"];
-  console.log("Authorization Header:", authHeader);
+  // console.log("Authorization Header:", authHeader);
 
   if (!authHeader) {
     return res.status(401).json({ message: "No token provided, please login" });
@@ -21,6 +21,7 @@ function checkForAuthentication(req, res, next) {
   }
 
   req.user = user;
+  console.log(user)
   next();
 }
 
@@ -40,6 +41,7 @@ function restrictTo(roles = []) {
         .status(403)
         .json({ message: "Access restricted: Insufficient permissions" });
     }
+    console.log(req.user, "-----------------------");
     return next();
   };
 }

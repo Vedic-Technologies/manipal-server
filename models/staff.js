@@ -3,8 +3,9 @@ const mongoose = require("mongoose");
 const staffSchema = new mongoose.Schema(
   {
     adminID: {
-      type: String,
-      // require: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     firstName: {
       type: String,
@@ -16,7 +17,7 @@ const staffSchema = new mongoose.Schema(
     email: {
       type: String,
       require: true,
-      // unique: true,
+      unique: true,
     },
     gender: {
       type: String,
@@ -31,7 +32,7 @@ const staffSchema = new mongoose.Schema(
     userType: {
       type: String,
       default: "staff",
-      // require: true,
+      require: true,
     },
   },
   { timestamps: true }
