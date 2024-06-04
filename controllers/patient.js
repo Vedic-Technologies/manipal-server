@@ -56,18 +56,22 @@ async function RegisterPatient(req, res) {
 // }
 
 async function getRegisteredPatients(req, res) {
-  const user = req.user;
-  console.log(user);
+  try {
+    const user = req.user;
+    console.log("user is", user);
 
-  if (user) {
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
     const allPatients = await Patient.find({
-      adminID: user._id,
+      adminID: "665de8c87aa15d528a4482cc",
     });
-    return res.json(allPatients);
-  } else {
-    const allPatients = await Patient.find({});
-    console.log(allPatients);
-    return res.json(allPatients);
+
+    return res.status(200).json(allPatients);
+  } catch (error) {
+    console.error("Error fetching patients:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 }
 
