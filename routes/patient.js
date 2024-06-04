@@ -9,10 +9,16 @@ const {
   GetPatientById,
 } = require("../controllers/patient");
 const shoulderRouter = require("../routes/shoulder");
+const Patient = require("../models/registerPatient");
 
 const router = express.Router();
 
 router.use("/shoulder", shoulderRouter);
+
+router.get("/all", async (req, res) => {
+  const all = await Patient.find({})
+  return res.send(all);
+});
 
 router.route("/all_patients").get(getRegisteredPatients);
 // router.route("/all_patients/update").get(updatePatients);
