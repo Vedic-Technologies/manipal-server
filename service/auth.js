@@ -1,16 +1,16 @@
-const sessionIdToUserMap = new Map();
-
 const jwt = require("jsonwebtoken");
 const secret = "manipal$server$";
 
-function setUser(user) {
-  return jwt.sign(
-    {
-      _id: user._id,
-      email: user.email,
-    },
-    secret
-  );
+function generateToken(user) {
+  if (!user.userType) {
+    return;
+  }
+  const payload = {
+    _id: user.userType === "staff" ? user.adminID : user._id,
+    userType: user.userType,
+    email: user.email,
+  };
+  return jwt.sign(payload, secret);
 }
 
 function getUser(token) {
@@ -23,6 +23,6 @@ function getUser(token) {
 }
 
 module.exports = {
-  setUser,
+  generateToken,
   getUser,
 };

@@ -1,30 +1,48 @@
 const { getUser } = require("../service/auth");
 
 function checkForAuthentication(req, res, next) {
-  const header = req.headers["authorization"];
-  // console.log(req.headers);
-  console.log(header);
-  if (!header)
-    return res.status(401).json({ message: "no token please login" });
+  req.user = null;
+  const authHeader = req.headers["authorization"];
+  console.log("Authorization Header:", authHeader);
 
-  const Token = header.split("Bearer ")[1];
-  const user = getUser(Token);
-  if (!user) return res.status(401).json({ message: "Unauthorized" });
+  if (!authHeader) {
+    return res.status(401).json({ message: "No token provided, please login" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "Malformed token, please login" });
+  }
+
+  const user = getUser(token); // Implement getUser to validate the token
+  if (!user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
   req.user = user;
   next();
 }
 
-// function restrictTo(roles = []) {
-//   return function (req, res, next) {
-//     if (!req.user) return res.json({ message: "restrict access" });
+function blocked(req, res, next) {
+  return res.status(500).json({ message: "under maintainance" });
+}
 
-//     if (!roles.includes(req.user.role))
-//       return res.json({ message: "restrict access" });
-
-//     return next();
-//   };
-// }
+function restrictTo(roles = []) {
+  return function (req, res, next) {
+    if (!req.user) {
+      return res
+        .status(403)
+        .json({ message: "Access restricted: User not authenticated" });
+    }
+    if (!roles.includes(req.user.userType)) {
+      return res
+        .status(403)
+        .json({ message: "Access restricted: Insufficient permissions" });
+    }
+    return next();
+  };
+}
 
 async function checkAuth(req, res, next) {
   const userUid = req.cookies?.uid;
@@ -38,4 +56,6 @@ async function checkAuth(req, res, next) {
 module.exports = {
   checkForAuthentication,
   checkAuth,
+  restrictTo,
+  blocked,
 };
