@@ -65,7 +65,7 @@ async function getRegisteredPatients(req, res) {
     }
 
     const allPatients = await Patient.find({
-      adminID: "665de8c87aa15d528a4482cc",
+      adminID: user._id,
     });
 
     return res.status(200).json(allPatients);

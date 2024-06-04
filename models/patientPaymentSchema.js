@@ -3,9 +3,8 @@ const mongoose = require("mongoose");
 const patientPaymentSchema = new mongoose.Schema(
   {
     adminID: {
-      type: String,
-      // type: mongoose.Schema.Types.ObjectId,
-      // ref: "User",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     patientId: {
