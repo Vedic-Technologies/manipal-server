@@ -8,9 +8,8 @@ async function GetAllStaffs(req, res) {
   const adminID = req.user._id;
   if (!adminID) {
     return res.status(404).json({ msg: "invalid token or expired" });
-
   }
-  console.log("staff");
+  // console.log("staff");
   const alldbStaffs = await Staff.find({ adminID });
   console.log(alldbStaffs);
   return res.json(alldbStaffs);
@@ -35,7 +34,7 @@ async function CreateNewStaff(req, res) {
   if (!adminExist) {
     return res.status(404).json({ msg: "invalid token or expired" });
   }
-  
+
   const body = req.body;
   if (!body || !body.firstName || !body.email || !body.password) {
     return res.status(400).json({ msg: "all fields are req..." });
@@ -51,12 +50,10 @@ async function CreateNewStaff(req, res) {
   });
   console.log(result);
 
-  return res
-    .status(201)
-    .json({
-      msg: "success",
-      result: { ...result._doc, createdBy: adminExist.email },
-    });
+  return res.status(201).json({
+    msg: "success",
+    result: { ...result._doc, createdBy: adminExist.email },
+  });
 }
 
 async function UpdateStaffById(req, res) {
@@ -78,6 +75,18 @@ async function UpdateStaffById(req, res) {
 }
 
 async function deleteStaffById(req, res) {
+  const adminID = req.user._id;
+  const ExistingStaff = await Staff.findById(req.params.id);
+  // console.log(ExistingPatient, req.user);
+  if (!ExistingStaff) {
+    return res.status(404).json({ error: "staff not found" });
+  }
+
+  if (ExistingStaff.adminID.toString() !== adminID.toString()) {
+    return res.status(403).json({
+      message: "Unauthorized: You can only delete staff you have created",
+    });
+  }
   await Staff.findByIdAndDelete(req.params.id);
   res.json({ status: "deleted successfully" });
 }

@@ -27,7 +27,13 @@ async function handleNewPayment(req, res) {
       adminID,
     });
 
-    return res.status(201).json({ msg: "success", patient_id: result._id , createdBy: req.user.email });
+    return res
+      .status(201)
+      .json({
+        msg: "success",
+        patient_id: result._id,
+        createdBy: req.user.email,
+      });
   } catch (error) {
     // Handle the error
     if (error.name === "ValidationError") {

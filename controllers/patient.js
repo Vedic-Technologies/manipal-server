@@ -78,7 +78,7 @@ async function getRegisteredPatients(req, res) {
 async function GetPatientById(req, res) {
   try {
     const patientId = req.params.id;
-    const adminID = req.user?._id;
+    const adminID = req.user._id;
 
     // Validate if the ID is a valid MongoDB ObjectID
     if (!mongoose.Types.ObjectId.isValid(patientId)) {
@@ -92,10 +92,6 @@ async function GetPatientById(req, res) {
         _id: patientId,
         adminID: adminID,
       });
-    } else {
-      patient = await Patient.findOne({
-        _id: patientId,
-      });
     }
 
     if (!patient) {
@@ -104,12 +100,6 @@ async function GetPatientById(req, res) {
 
     // Fetch payment data
     const payments = await Payment.find({ patientId: patientId });
-    // if (!payments) {
-    //   return res
-    //     .status(404)
-    //     .json({ error: "No payments found for the patient" });
-    // }
-
     // Transform payment data
     const paymentData = payments.map((payment) => ({
       _id: payment._id,
@@ -153,11 +143,27 @@ async function UpdatePatientById(req, res) {
 }
 
 async function deletePatientById(req, res) {
+  const adminID = req.user._id;
+ 
   try {
+    await Payment.deleteMany({ patientId: req.params.id });
+    const ExistingPatient = await Patient.findById(req.params.id);
+    // console.log(ExistingPatient, req.user);
+    if (!ExistingPatient) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+
+    if (ExistingPatient.adminID.toString() !== adminID.toString()) {
+      return res.status(403).json({
+        message: "Unauthorized: You can only delete patients you have created",
+      });
+    }
+
+    // Remove the patient
     await Patient.findByIdAndDelete(req.params.id);
     res.json({ status: "deleted successfully" });
   } catch (error) {
-    return res.status(500).json({ error: "Patient not found" });
+    return res.status(500).json({ error: "internal server" });
   }
 }
 

@@ -36,9 +36,7 @@ async function UpdateUserById(req, res) {
 
 async function deleteUserById(req, res) {
   if (req.params.id === "66001456d97f0e8e6039f26c") {
-    return res
-      .status(403)
-      .send("Action not allowed for this admin entry");
+    return res.status(403).send("Action not allowed for this admin entry");
   }
   await User.findByIdAndDelete(req.params.id);
   res.json({ status: "deleted successfully" });
@@ -80,12 +78,19 @@ async function ValidateUserLogin(req, res) {
   let user;
   if (userType === "staff") {
     user = await Staff.findOne({ email });
+
+    // check if his doctor exist
+    const DrExist = await User.findById(user?.adminID);
+    // console.log(DrExist);
+    if (!DrExist) {
+      return res.status(404).json({ error: "doctor not exist" });
+    }
   } else if (userType === "admin") {
     user = await User.findOne({ email });
   } else {
     return res.status(404).json({ error: "invalid userType" });
   }
-  console.log(user);
+  // console.log(user);
 
   if (!user) {
     return res.status(404).json({ error: "User not found" });

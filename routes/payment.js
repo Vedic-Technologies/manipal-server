@@ -9,10 +9,17 @@ const {
 } = require("../controllers/payment");
 const PatientPayment = require("../models/patientPaymentSchema");
 const User = require("../models/user");
+const { restrictTo } = require("../middlewares/auth");
 
 const router = express.Router();
 
+// router.get("/all", restrictTo("superAdmin"), async (req, res) => {
+//   const all = await PatientPayment.find({});
+//   return res.json(all);
+// });
+
 router.route("/all_payments").get(GetAllPayment);
+
 router.route("/add_payment").post(handleNewPayment);
 // router.get("/update", async (req, res) => {
 //   try {

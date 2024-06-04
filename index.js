@@ -34,7 +34,7 @@ const corsOptions = {
   // origin: "http://localhost:3000",
   // origin: "https://manipal-client.vercel.app",
   origin: (origin, callback) => {
-    console.log(origin);
+    // console.log(origin);
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
     } else {
@@ -67,7 +67,7 @@ app.use("/api/users", userRouter);
 app.use("/api/superAdmin", SuperAdminRouter);
 app.use("/api/staffs", checkForAuthentication, staffRouter);
 app.use("/api/patient", checkForAuthentication, patientRouter);
-app.use("/patient", checkForAuthentication, patientRouter);
+// app.use("/patient", checkForAuthentication, patientRouter);
 app.use("/api/doctors", checkForAuthentication, doctorRouter);
 app.use("/api/payment", checkForAuthentication, paymentRouter);
 
