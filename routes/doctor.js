@@ -1,4 +1,5 @@
 const express = require("express");
+// const upload = require("../middlewares/multer");
 
 const {
   AddDoctor,
@@ -10,8 +11,8 @@ const {
 
 const router = express.Router();
 
-router.route("/all_doctors").get(getDoctorDetails);
-router.route("/add_doctor").post(AddDoctor);
+router.post("/add_doctor", AddDoctor);
+router.get("/all_doctor", getDoctorDetails);
 router
   .route("/:id")
   .get(GetDoctorById)

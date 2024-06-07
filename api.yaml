@@ -847,19 +847,41 @@ definitions:
     properties:
       name:
         type: string
+      fullName:
+        type: string
+      dob:
+        type: string
+      biography:
+        type: string
+      image:
+        type: string
+        format: base64
+      gender:
+        type: string
       specialty:
         type: string
       email:
         type: string
-        format: email
-      phone:
-        type: integer
-        format: int64
-      image:
+      relationship:
         type: string
-        example: https://image_url
+      contact:
+        type: string
+      emergencyContact:
+        type: number
       address:
-        type: string
+        type: object
+        properties:
+          country:
+            type: string
+            default: India
+          state:
+            type: string
+          district:
+            type: string
+          pin_code:
+            type: string
+          village:
+            type: string
       availability:
         type: object
         properties:
@@ -874,10 +896,6 @@ definitions:
                 type: string
               end:
                 type: string
-    required:
-      - name
-      - phone
-      - address
 
   Soulder:
     type: object
