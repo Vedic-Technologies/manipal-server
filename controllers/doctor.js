@@ -1,55 +1,56 @@
 const Doctor = require("../models/doctor");
+const cloudinary = require("../cloudinary");
+const fs = require("fs");
+const path = require("path");
 
 async function AddDoctor(req, res) {
   const body = req.body;
-  if (!body || !body.name || !body.phone || !body.address) {
+  if (!body || !body.name || !body.contact || !body.fullName) {
     return res.status(400).json({ msg: "all fields are req..." });
   }
-  const doctor = await Doctor.create({
-    name: body.name,
-    specialty: body.specialty,
-    email: body.email,
-    phone: body.phone,
-    address: body.address,
-    availability: body.availability,
-  });
-  return res.status(201).json({ msg: "doctor added", doctorId: doctor._id });
+
+  try {
+    const { image } = req.body;
+
+    let imageUrl;
+
+    // Check if the request has base64 image data
+    if (image) {
+      // Upload base64 image to Cloudinary
+      const result = await cloudinary.uploader.upload(image, {
+        folder: "doctors",
+      });
+      imageUrl = result.secure_url;
+    } else if (req.file) {
+      // If not, then check if the request has form data image
+      const filePath = path.join(__dirname, "uploads", req.file.filename);
+      const result = await cloudinary.uploader.upload(filePath, {
+        folder: "doctors",
+      });
+      imageUrl = result.secure_url;
+
+      // Delete the file from the server after upload
+      // fs.unlinkSync(filePath);
+    } else {
+      // return res.status(400).json({ error: "No image provided" });
+    }
+
+    const doctor = await Doctor.create({
+      ...body,
+      image: imageUrl,
+    });
+    return res
+      .status(201)
+      .json({ msg: "doctor added", doctorId: doctor._id, data: doctor });
+  } catch (err) {
+    return res.status(500).json({ error: err });
+  }
 }
 
 async function getDoctorDetails(req, res) {
-  // const allDoctors = await Doctor.find({});
-  // return res.json(allDoctors);
-
-  try {
-    const allDoctors = await Doctor.find({}).populate({
-      path: "patientId",
-      model: "patient",
-      select: "patientName _id contact image active", // Choose the fields you want to include
-    });
-
-    console.log(allPayments);
-
-    // Optionally, enhance data format here if needed
-    const paymentsWithPatientInfo = allPayments.map((payment) => ({
-      _id: payment._id,
-      patientId: payment.patientId._id,
-      paymentType: payment.paymentType,
-      amount: payment.amount,
-      paymentDate: payment.paymentDate,
-      patient: {
-        // _id: payment.patientId._id,
-        name: payment.patientId?.patientName,
-        active: payment.patientId?.active,
-        contact: payment.patientId?.contact,
-        image: payment.patientId?.image,
-      },
-    }));
-
-    return res.json(paymentsWithPatientInfo);
-  } catch (error) {
-    console.error("Failed to retrieve payments:", error);
-    return res.status(500).json({ msg: "Internal server error" });
-  }
+  // const { id } = req.params;
+  const allDoctors = await Doctor.find({});
+  return res.json(allDoctors);
 }
 
 async function GetDoctorById(req, res) {
@@ -78,8 +79,12 @@ async function UpdateDoctorById(req, res) {
 }
 
 async function deleteDoctorById(req, res) {
-  await Doctor.findByIdAndDelete(req.params.id);
-  res.json({ status: "deleted successfully" });
+  try {
+    await Doctor.findByIdAndDelete(req.params.id);
+    res.json({ status: "deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({ msg: "doctor not found", error: error });
+  }
 }
 
 module.exports = {
