@@ -14,16 +14,14 @@ const {
 } = require("../middlewares/auth");
 
 const router = express.Router();
-// router.get("/allStaffs", restrictTo("superAdmin"), GetAllStaffsWithoutAdmin);
-
 router.get("/", GetAllStaffs);
 
 router.post("/register", CreateNewStaff);
 
 router
   .route("/:id")
-  .get(blocked, GetStaffById)
-  .patch(blocked, UpdateStaffById)
+  .get( GetStaffById)
+  .patch( UpdateStaffById)
   .delete(deleteStaffById);
 
 module.exports = router;

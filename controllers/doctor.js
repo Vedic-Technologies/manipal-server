@@ -5,13 +5,17 @@ const path = require("path");
 
 async function AddDoctor(req, res) {
   const body = req.body;
+  const adminID = req.user._id;
+
+  if (!adminID) {
+    return res.status(400).json({ msg: "invalid token" });
+  }
   if (!body || !body.name || !body.contact || !body.fullName) {
-    return res.status(400).json({ msg: "all fields are req..." });
+    return res.status(400).json({ msg: "all fields are required" });
   }
 
   try {
     const { image } = req.body;
-
     let imageUrl;
 
     // Check if the request has base64 image data
@@ -21,23 +25,12 @@ async function AddDoctor(req, res) {
         folder: "doctors",
       });
       imageUrl = result.secure_url;
-    } else if (req.file) {
-      // If not, then check if the request has form data image
-      const filePath = path.join(__dirname, "uploads", req.file.filename);
-      const result = await cloudinary.uploader.upload(filePath, {
-        folder: "doctors",
-      });
-      imageUrl = result.secure_url;
-
-      // Delete the file from the server after upload
-      // fs.unlinkSync(filePath);
-    } else {
-      // return res.status(400).json({ error: "No image provided" });
     }
 
     const doctor = await Doctor.create({
       ...body,
       image: imageUrl,
+      adminID,
     });
     return res
       .status(201)

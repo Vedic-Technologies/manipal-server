@@ -2,6 +2,9 @@ const { v4: uuidv4 } = require("uuid");
 const User = require("../models/user");
 const Staff = require("../models/staff");
 const { generateToken, getUser } = require("../service/auth");
+const PatientPayment = require("../models/patientPaymentSchema");
+const Patient = require("../models/registerPatient");
+const { default: mongoose } = require("mongoose");
 
 async function GetAllUsers(req, res) {
   const alldbUsers = await User.find({});
@@ -35,11 +38,51 @@ async function UpdateUserById(req, res) {
 }
 
 async function deleteUserById(req, res) {
-  if (req.params.id === "66001456d97f0e8e6039f26c") {
+  const userId = req.params.id;
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.status(404).json({ error: "user not found" });
+  }
+  if (userId === "66001456d97f0e8e6039f26c") {
     return res.status(403).send("Action not allowed for this admin entry");
   }
-  await User.findByIdAndDelete(req.params.id);
-  res.json({ status: "deleted successfully" });
+
+  // Start a new session and transaction
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    // Delete associated patients within the transaction
+    await Patient.deleteMany({ adminID: userId }).session(session);
+
+    // Delete associated payments within the transaction
+    await PatientPayment.deleteMany({ adminID: userId }).session(session);
+
+    // Delete associated staff within the transaction
+    await Staff.deleteMany({ adminID: userId }).session(session);
+
+    // Delete the user within the transaction
+    await User.findByIdAndDelete(userId).session(session);
+
+    // Commit the transaction if all deletions are successful
+    await session.commitTransaction();
+    session.endSession();
+    return res.json({
+      success: true,
+      message: "User and all associated data deleted successfully",
+    });
+  } catch (error) {
+    // Abort the transaction if any operation fails
+    await session.abortTransaction();
+    session.endSession();
+    return res.status(500).send({
+      success: false,
+      message: "Failed to delete user and associated data",
+      error,
+    });
+  }
+
+  // await User.findByIdAndDelete(req.params.id);
+  // res.json({ status: "deleted successfully" });
 }
 
 async function CreateNewUser(req, res) {
@@ -112,6 +155,11 @@ async function ValidateUserLogin(req, res) {
 
   return res.json({ message: "Login successful", user: user, token: token });
 }
+
+// const User = require("../models/user");
+// const Patient = require("../models/patient");
+// const PatientPayment = require("../models/patientPayment");
+
 
 module.exports = {
   GetAllUsers,
