@@ -15,12 +15,6 @@ async function GetAllStaffs(req, res) {
   return res.json(alldbStaffs);
 }
 
-async function GetAllStaffsWithoutAdmin(req, res) {
-  const alldbStaffs = await Staff.find({});
-  console.log(alldbStaffs);
-  return res.json(alldbStaffs);
-}
-
 async function GetStaffById(req, res) {
   const staff = await Staff.findById(req.params.id);
   if (!staff) return res.status(404).json({ error: "Staff not found" });
@@ -57,21 +51,21 @@ async function CreateNewStaff(req, res) {
 }
 
 async function UpdateStaffById(req, res) {
-  // try {
-  //   const StaffUpdates = req.body;
-  //   const staff = await Staff.findById(req.params.id);
-  //   if (!staff) {
-  //     return res.status(404).json({ error: "Staff not found" });
-  //   }
-  //   Object.keys(StaffUpdates).forEach((key) => {
-  //     staff[key] = StaffUpdates[key];
-  //   });
-  //   const updatedStaff = await staff.save();
-  //   return res.json({ status: "update success", Staff: updatedStaff });
-  // } catch (error) {
-  //   console.error("Error updating patient:", error);
-  //   return res.status(500).json({ error: "Internal server error" });
-  // }
+  try {
+    const StaffUpdates = req.body;
+    const staff = await Staff.findById(req.params.id);
+    if (!staff) {
+      return res.status(404).json({ error: "Staff not found" });
+    }
+    Object.keys(StaffUpdates).forEach((key) => {
+      staff[key] = StaffUpdates[key];
+    });
+    const updatedStaff = await staff.save();
+    return res.json({ msg: "update success", data: updatedStaff });
+  } catch (error) {
+    console.error("Error updating patient:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 }
 
 async function deleteStaffById(req, res) {
@@ -97,6 +91,4 @@ module.exports = {
   UpdateStaffById,
   deleteStaffById,
   CreateNewStaff,
-  GetAllStaffsWithoutAdmin,
-  // ValidateStaffLogin,
 };

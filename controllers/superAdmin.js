@@ -96,6 +96,8 @@ async function ValidateSuperAdminLogin(req, res) {
   return res.json({ message: "Login successful", superAdmin, token });
 }
 
+
+
 module.exports = {
   GetAllSuperAdmin,
   GetAdminById,
