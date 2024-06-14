@@ -11,13 +11,16 @@ async function RegisterPatient(req, res) {
   if (!body || !body.patientName || !body.gender || !body.age) {
     return res.status(400).json({ msg: "all fields are req..." });
   }
+  const defaultImg =
+    "https://res.cloudinary.com/df0mfuut3/image/upload/v1718384931/default%20image/user_yrev00.png";
 
   try {
-    let imageUrl = null;
+    let imageUrl = defaultImg;
     if (body.image) {
       const result = await cloudinary.uploader.upload(body.image);
       imageUrl = result.secure_url;
     }
+    // if !image then procced with defaultImg url
     const newPatient = await Patient.create({
       adminID: user._id,
       ...body,
