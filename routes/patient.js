@@ -43,6 +43,26 @@ router.route("/all_patients").get(getRegisteredPatients);
 //   } catch (err) {
 //     console.error(err);
 //   }
+// try {
+//   const result = await Patient.updateMany(
+//     {
+//       image:
+//         "https://res.cloudinary.com/df0mfuut3/image/upload/v1718378568/dsf0liqmng8ezals7lky.png",
+//     },
+//     {
+//       $set: {
+//         image:
+//           "https://res.cloudinary.com/df0mfuut3/image/upload/v1718384931/default%20image/user_yrev00.png",
+//       },
+//     }
+//   );
+
+//   console.log(`${result.modifiedCount} documents were updated`);
+  
+// } catch (error) {
+//   console.log(error)
+  
+// }
 // });
 
 router.route("/patient_registration").post(RegisterPatient);

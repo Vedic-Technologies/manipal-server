@@ -129,13 +129,25 @@ async function UpdatePatientById(req, res) {
   try {
     const patientUpdates = req.body;
     const patient = await Patient.findById(req.params.id);
+    const defaultImg =
+      "https://res.cloudinary.com/df0mfuut3/image/upload/v1718384931/default%20image/user_yrev00.png";
 
     if (!patient) {
       return res.status(404).json({ error: "Patient not found" });
     }
+
+    let imageUrl = defaultImg;
+    if (patientUpdates.image && patientUpdates.image.startsWith("data:image")) {
+      const result = await cloudinary.uploader.upload(patientUpdates.image);
+      imageUrl = result.secure_url;
+    } else if (patientUpdates.image.startsWith("http")) {
+      imageUrl = patientUpdates.image; // Directly use provided URL
+    }
     Object.keys(patientUpdates).forEach((key) => {
       patient[key] = patientUpdates[key];
     });
+
+    patient.image = imageUrl;
 
     const updatedPatient = await patient.save();
     return res.json({ status: "update success", patient: updatedPatient });
@@ -147,7 +159,7 @@ async function UpdatePatientById(req, res) {
 
 async function deletePatientById(req, res) {
   const adminID = req.user._id;
- 
+
   try {
     await Payment.deleteMany({ patientId: req.params.id });
     const ExistingPatient = await Patient.findById(req.params.id);
