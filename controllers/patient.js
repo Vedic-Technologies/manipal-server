@@ -17,6 +17,7 @@ async function RegisterPatient(req, res) {
   try {
     let imageUrl = defaultImg;
     if (body.image) {
+      // console.log("-------", body.image);
       const result = await cloudinary.uploader.upload(body.image);
       imageUrl = result.secure_url;
     }
@@ -61,7 +62,7 @@ async function RegisterPatient(req, res) {
 async function getRegisteredPatients(req, res) {
   try {
     const user = req.user;
-    console.log("user is", user);
+    // console.log("user is", user);
 
     if (!user) {
       return res.status(401).json({ message: "Unauthorized" });
@@ -126,6 +127,10 @@ async function GetPatientById(req, res) {
 }
 
 async function UpdatePatientById(req, res) {
+  const body = req.body;
+  if (!body || !body.patientName || !body.gender || !body.age) {
+    return res.status(400).json({ msg: "all fields are req..." });
+  }
   try {
     const patientUpdates = req.body;
     const patient = await Patient.findById(req.params.id);
@@ -136,17 +141,37 @@ async function UpdatePatientById(req, res) {
       return res.status(404).json({ error: "Patient not found" });
     }
 
-    let imageUrl = defaultImg;
-    if (patientUpdates.image && patientUpdates.image.startsWith("data:image")) {
-      const result = await cloudinary.uploader.upload(patientUpdates.image);
-      imageUrl = result.secure_url;
-    } else if (patientUpdates.image.startsWith("http")) {
-      imageUrl = patientUpdates.image; // Directly use provided URL
+    let imageUrl = patient.image || defaultImg;
+
+    if (patientUpdates.image) {
+      if (patientUpdates.image.startsWith("data:image")) {
+        // Base64 image upload
+        try {
+          const result = await cloudinary.uploader.upload(patientUpdates.image);
+          imageUrl = result.secure_url;
+        } catch (uploadError) {
+          // console.error("Error uploading image:", uploadError);
+          return res
+            .status(500)
+            .json({ error: "Image upload failed on cloudinary" });
+        }
+      } else if (patientUpdates.image.startsWith("http")) {
+        // Direct URL
+        imageUrl = patientUpdates.image;
+      } else {
+        // Invalid image format
+        return res.status(400).json({ error: "Invalid image format" });
+      }
     }
+
     Object.keys(patientUpdates).forEach((key) => {
-      patient[key] = patientUpdates[key];
+      if (key !== "image") {
+        // Skip image
+        patient[key] = patientUpdates[key];
+      }
     });
 
+    // set configured image
     patient.image = imageUrl;
 
     const updatedPatient = await patient.save();

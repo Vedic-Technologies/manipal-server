@@ -21,7 +21,7 @@ function checkForAuthentication(req, res, next) {
   }
 
   req.user = user;
-  console.log(user)
+  // console.log(user)
   next();
 }
 
