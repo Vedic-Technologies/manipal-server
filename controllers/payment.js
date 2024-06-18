@@ -55,7 +55,7 @@ async function GetAllPayment(req, res) {
       select: "patientName _id contact image active", // Choose the fields you want to include
     });
 
-    console.log(allPayments);
+    // console.log(allPayments);
 
     // Optionally, enhance data format here if needed
     const paymentsWithPatientInfo = allPayments.map((payment) => ({
