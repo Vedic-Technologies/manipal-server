@@ -7,6 +7,7 @@ const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 
 const { checkForAuthentication } = require("./middlewares/auth.js");
+const healthCheck = require("./service/health.js");
 const userRouter = require("./routes/user");
 const SuperAdminRouter = require("./routes/superAdmin.js");
 const staffRouter = require("./routes/staff.js");
@@ -70,6 +71,9 @@ app.use("/api/patient", checkForAuthentication, patientRouter);
 // app.use("/patient", checkForAuthentication, patientRouter);
 app.use("/api/doctors", checkForAuthentication, doctorRouter);
 app.use("/api/payment", checkForAuthentication, paymentRouter);
+
+
+app.use("/health", healthCheck);
 
 // app.use("/api/admin", adminRouter);
 
